@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"rootDir": "src",
+		"outDir": "built"
+	},
+	"files": [
+		
+	]
+}

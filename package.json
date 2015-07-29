@@ -1,0 +1,25 @@
+{
+  "name": "syringe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js\\",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matthewjh/Syringe.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/matthewjh/Syringe/issues"
+  },
+  "homepage": "https://github.com/matthewjh/Syringe#readme",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-rimraf": "^0.1.1",
+    "gulp-typescript": "^2.8.0",
+    "typescript": "^1.5.3"
+  }
+}
