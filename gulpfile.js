@@ -5,10 +5,11 @@ var exec = require('child_process').exec;
 
 var typescriptProject = ts.createProject('tsconfig.json');
 
-gulp.task('clean-build-folder', function () {
+function cleanBuildFolder () {
   return gulp.src('built/**/*', { read: false })
     .pipe(rimraf());
-});
+}
+gulp.task('clean-build-folder', cleanBuildFolder);
 
 gulp.task('build', ['clean-build-folder'], function (done) {
   exec('tsc --p .', function (error, stdout, stderr) {
@@ -25,5 +26,5 @@ gulp.task('build', ['clean-build-folder'], function (done) {
 });
 
 gulp.task('unit', ['build'], function () {
-
-})
+  cleanBuildFolder();
+});

@@ -1,10 +1,11 @@
 {
 	"compilerOptions": {
 		"module": "commonjs",
-		"rootDir": "src",
+		"rootDir": ".",
 		"outDir": "built"
 	},
 	"files": [
-		
+		"src/test.ts",
+		"test/test.spec.ts"
 	]
 }
