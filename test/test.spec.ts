@@ -1,3 +1,5 @@
+/// <reference path="../definitions/definitions.d.ts"/>
+
 import {add} from '../src/test';
 
 describe('d', () => {
