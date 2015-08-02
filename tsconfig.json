@@ -1,12 +1,12 @@
 {
-	"compilerOptions": {
-		"module": "commonjs",
-		"rootDir": ".",
-		"outDir": "built"
-	},
-	"filesGlob": [
-		"src/**/*.ts",
-		"test/**/*.ts",
-		"definitions/**/*.d.ts"
-	]
+  "compilerOptions": {
+    "module": "commonjs",
+    "rootDir": ".",
+    "outDir": "built"
+  },
+  "filesGlob": [
+    "src/**/*.ts",
+    "test/**/*.ts",
+    "definitions/**/*.d.ts"
+  ]
 }
