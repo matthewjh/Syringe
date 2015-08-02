@@ -5,11 +5,10 @@ var exec = require('child_process').exec;
 
 var typescriptProject = ts.createProject('tsconfig.json');
 
-function cleanBuildFolder () {
+gulp.task('clean-build-folder', function () {
   return gulp.src('built/**/*', { read: false })
     .pipe(rimraf());
-}
-gulp.task('clean-build-folder', cleanBuildFolder);
+});
 
 gulp.task('build', ['clean-build-folder'], function (done) {
   exec('tsc --p .', function (error, stdout, stderr) {
@@ -26,5 +25,18 @@ gulp.task('build', ['clean-build-folder'], function (done) {
 });
 
 gulp.task('unit', ['build'], function () {
-  cleanBuildFolder();
+  var karma = require('gulp-karma');
+  var testFiles = [
+    'built/test/**/*.js'
+  ];
+  
+  return gulp.src(testFiles)
+      .pipe(karma({
+        configFile: 'karma.conf.js',
+        action: 'run'
+      }))
+      .on('error', function(err) {
+        // Make sure failed tests cause gulp to exit non-zero 
+        throw err;
+      });  
 });
