@@ -4,8 +4,9 @@
 		"rootDir": ".",
 		"outDir": "built"
 	},
-	"files": [
-		"src/test.ts",
-		"test/test.spec.ts"
+	"filesGlob": [
+		"src/**/*.ts",
+		"test/**/*.ts",
+		"definitions/**/*.d.ts"
 	]
 }
