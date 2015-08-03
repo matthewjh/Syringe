@@ -2,7 +2,9 @@
   "compilerOptions": {
     "module": "commonjs",
     "rootDir": ".",
-    "outDir": "built"
+    "outDir": "built",
+    "noImplicitAny": true,
+    "noEmitOnError": true
   },
   "filesGlob": [
     "src/**/*.ts",
