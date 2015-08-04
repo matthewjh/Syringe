@@ -6,20 +6,26 @@ import 'es6-promise';
 export class Injector implements Syringe.IInjector {
   private _tokens: Syringe.IToken<any>[];
   private _providers: Syringe.Provider.IProvider<any>[];
+  private _parent: Syringe.IInjector;
   
-  constructor(bindings: Syringe.Binding.IBinding<any>[]) {
+  constructor(bindings: Syringe.Binding.IBinding<any>[], parent?: Syringe.IInjector) {
     this._tokens = [];
     this._providers = [];
+    this._parent = parent;
     
     this._ingestBindings(bindings);
   }
   
   get<T>(token: Syringe.IToken<T>): Promise<T> {
-      let value: T;
-      let provider = this._getProvider(token);
+    let value: T;
+    let provider = this._getProvider(token);
       
     if (!provider) {
-      return Promise.reject(new Error('No provider found for token ${token} on this Injector'));
+      if (this._parent) {
+        return this._parent.get(token);
+      } else {
+        return Promise.reject(new Error('No provider found for token ${token} on this Injector')); 
+      }
     } else {
       let dependencyPromises = provider.dependencyTokens.map(token => this.get(token));
       
