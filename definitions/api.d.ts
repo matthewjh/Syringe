@@ -4,11 +4,18 @@ declare module Syringe {
   module Binding {
     interface IBinding<T> { 
       token: IToken<T>;
-      value: T;
+      provider: Provider.IProvider<T>
     } 
     
-    interface IPotentialBinding<T> {
+    interface IUnprovidedBinding<T> {
       toValue(value: T): IBinding<T>;
+    }
+  }
+  
+  module Provider {
+    interface IProvider<T> {
+      dependencyTokens: Syringe.IToken<any>[];
+      get(...dependencies: any[]): Promise<T>;
     }
   }
 
@@ -18,7 +25,7 @@ declare module Syringe {
     get<T>(token: IToken<T>): Promise<T>;
   }
 
-  function bind<T>(token: IToken<T>): Binding.IPotentialBinding<T>;
+  function bind<T>(token: IToken<T>): Binding.IUnprovidedBinding<T>;
 }
 
 declare module 'syringe' {

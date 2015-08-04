@@ -2,25 +2,31 @@
 /// <reference path="../definitions/api.d.ts"/>
 
 export class Injector implements Syringe.IInjector {
-  private _bindings: Syringe.Binding.IBinding<any>[];
+  private _tokens: Syringe.IToken<any>[];
+  private _providers: Syringe.Provider.IProvider<any>[];
   
   constructor(bindings: Syringe.Binding.IBinding<any>[]) {
-    this._bindings = bindings;
+    this._tokens = [];
+    this._providers = [];
+    
+    this._ingestBindings(bindings);
   }
   
   get<T>(token: Syringe.IToken<T>): Promise<T> {
     var value: T;
+    var tokenIndex = this._tokens.indexOf(token);
     
-    this._bindings.forEach(binding => {
-      if (binding.token === token) {
-        value = binding.value;
-      }
-    });
-    
-    if (!value) {
+    if (tokenIndex === -1) {
       return Promise.reject(new Error('No binding found for token ${token} on this Injector'));
+    } else {
+      return this._providers[tokenIndex].get([]);
     }
-    
-    return Promise.resolve(value);
   } 
+  
+  private _ingestBindings(bindings: Syringe.Binding.IBinding<any>[]): void {
+    bindings.forEach(({token, provider}) => {
+      this._tokens.push(token);
+      this._providers.push(provider);
+    });
+  }
 }
