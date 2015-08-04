@@ -19,3 +19,18 @@ export class FactoryProvider<T> implements Syringe.Provider.IProvider<T> {
     );
   }
 }
+
+export class AsyncFactoryProvider<T> implements Syringe.Provider.IProvider<T> {
+  public dependencyTokens: Syringe.IToken<any>[];
+  
+  private _factory: (...deps: any[]) => Promise<T>; 
+  
+  constructor(factory: (...deps: any[]) => Promise<T>, dependencyTokens: Syringe.IToken<any>[]) {
+    this.dependencyTokens = dependencyTokens;
+    this._factory = factory;
+  }
+  
+  get(dependencies: any[]): Promise<T> {
+    return this._factory(...dependencies);
+  }
+}
