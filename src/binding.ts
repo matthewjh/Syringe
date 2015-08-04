@@ -1,7 +1,7 @@
 /// <reference path="../definitions/definitions.d.ts"/>
 /// <reference path="../definitions/api.d.ts"/>
 
-import {ValueProvider} from './provider/facade';
+import {ValueProvider, FactoryProvider} from './provider/facade';
 
 class Binding<T> implements Syringe.Binding.IBinding<T> {
   public token: Syringe.IToken<T>;
@@ -22,6 +22,10 @@ class UnprovidedBinding<T> implements Syringe.Binding.IUnprovidedBinding<T> {
 
   toValue(value: T): Binding<T> {
     return new Binding(this._token, new ValueProvider(value));
+  }
+  
+  toFactory<T1, T2, T3, T4>(factory: (...deps: any[]) => T, ...dependencyTokens: Syringe.IToken<T>[]): Syringe.Binding.IBinding<T> {
+    return new Binding(this._token, new FactoryProvider(factory, dependencyTokens));
   }
 }
 

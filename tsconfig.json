@@ -3,7 +3,6 @@
     "module": "commonjs",
     "rootDir": ".",
     "outDir": "built",
-    "noImplicitAny": true,
     "noEmitOnError": true
   },
   "filesGlob": [

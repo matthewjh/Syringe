@@ -9,13 +9,18 @@ declare module Syringe {
     
     interface IUnprovidedBinding<T> {
       toValue(value: T): IBinding<T>;
+      toFactory(factory: () => T): IBinding<T>;
+      toFactory<T1>(factory: (dep1: T1) => T, token1: IToken<T1>): IBinding<T>;
+      toFactory<T1, T2>(factory: (dep1: T1, dep2: T2) => T, token1: IToken<T1>, token2: IToken<T2>): IBinding<T>;
+      toFactory<T1, T2, T3>(factory: (dep1: T1, dep2: T2, dep3: T3) => T, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>): IBinding<T>;
+      toFactory<T1, T2, T3, T4>(factory: (dep1: T1, dep2: T2, dep3: T3, dep4: T4) => T, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>): IBinding<T>;
     }
   }
   
   module Provider {
     interface IProvider<T> {
-      dependencyTokens: Syringe.IToken<any>[];
-      get(...dependencies: any[]): Promise<T>;
+      dependencyTokens: IToken<any>[];
+      get(dependencies: any[]): Promise<T>;
     }
   }
 
