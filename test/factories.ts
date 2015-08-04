@@ -67,4 +67,21 @@ describe('injector with factory bindings', () => {
       done();
     });
   });
+  
+  it('should propagate async dependency promise rejection', (done) => {
+    let injector: Syringe.IInjector;
+    let error = new Error();
+    let bindings = [
+      bind(oneToken).toAsyncFactory(() => Promise.reject(error)),
+      bind(twoToken).toFactory((one) => one + 1,
+                               oneToken)                   
+    ];
+    
+    injector = new Injector(bindings);
+    
+    injector.get(twoToken).catch(actualError => {
+      expect(actualError).toBe(error);
+      done();
+    });
+  });
 });
