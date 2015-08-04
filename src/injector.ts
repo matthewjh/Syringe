@@ -15,13 +15,14 @@ export class Injector implements Syringe.IInjector {
   }
   
   get<T>(token: Syringe.IToken<T>): Promise<T> {
-    var value: T;
-    var provider = this._getProvider(token);
-    var dependencyPromises = provider.dependencyTokens.map(token => this.get(token));
-    
+      let value: T;
+      let provider = this._getProvider(token);
+      
     if (!provider) {
       return Promise.reject(new Error('No provider found for token ${token} on this Injector'));
     } else {
+      let dependencyPromises = provider.dependencyTokens.map(token => this.get(token));
+      
       return Promise.all(dependencyPromises).then(dependencies => {
         return provider.get(dependencies);
       });
@@ -29,7 +30,7 @@ export class Injector implements Syringe.IInjector {
   }
   
   private _getProvider<T>(token: Syringe.IToken<T>): Syringe.Provider.IProvider<T> {
-    var tokenIndex = this._tokens.indexOf(token);
+    let tokenIndex = this._tokens.indexOf(token);
     
     if (tokenIndex >= 0) {
       return this._providers[tokenIndex];
