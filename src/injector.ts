@@ -2,6 +2,7 @@
 /// <reference path="../definitions/api.d.ts"/>
 
 import 'es6-promise';
+import {CyclicDependencyError} from './errors';
 
 export class Injector implements Syringe.IInjector {
   private _tokens: Syringe.IToken<any>[];
@@ -16,18 +17,24 @@ export class Injector implements Syringe.IInjector {
     this._ingestBindings(bindings);
   }
   
-  get<T>(token: Syringe.IToken<T>): Promise<T> {
+  get<T>(token: Syringe.IToken<T>, tokenLog: Syringe.IToken<T>[] = []): Promise<T> {
     let value: T;
     let provider = this._getProvider(token);
+    
+    this._detectCycle(token, tokenLog);
+    tokenLog.push(token);
       
     if (!provider) {
       if (this._parent) {
         return this._parent.get(token);
       } else {
-        return Promise.reject(new Error('No provider found for token ${token} on this Injector')); 
+        return Promise.reject(new Error(`No provider found for token ${token} on this Injector`)); 
       }
     } else {
-      let dependencyPromises = provider.dependencyTokens.map(token => this.get(token));
+      let dependencyPromises = provider.dependencyTokens.map(token => {
+        let clonedTokenLog = tokenLog.slice();
+        return this.get(token, clonedTokenLog);
+      });
       
       return Promise.all(dependencyPromises).then(dependencies => {
         return provider.get(dependencies);
@@ -50,5 +57,13 @@ export class Injector implements Syringe.IInjector {
       this._tokens.push(token);
       this._providers.push(provider);
     });
+  }
+  
+  private _detectCycle(token: Syringe.IToken<any>, tokenLog: Syringe.IToken<any>[]): void {
+    let hasCycle = tokenLog.indexOf(token) !== -1;
+    
+    if (hasCycle) {
+      throw new CyclicDependencyError();
+    }
   }
 }

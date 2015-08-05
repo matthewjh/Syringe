@@ -9,6 +9,7 @@ declare module Syringe {
     
     interface IUnprovidedBinding<T> {
       toValue(value: T): IBinding<T>;
+      
       toFactory(factory: () => T): IBinding<T>;
       toFactory<T1>(factory: (dep1: T1) => T, token1: IToken<T1>): IBinding<T>;
       toFactory<T1, T2>(factory: (dep1: T1, dep2: T2) => T, token1: IToken<T1>, token2: IToken<T2>): IBinding<T>;

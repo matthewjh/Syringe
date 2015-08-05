@@ -3,6 +3,7 @@
 
 import 'es6-promise';
 import {Injector, Token, bind} from '../src/index';
+import {CyclicDependencyError} from '../src/errors';
 
 describe('injector with missing bindings', () => {
   let oneToken: Syringe.IToken<number> = new Token();
@@ -35,5 +36,22 @@ describe('injector with missing bindings', () => {
     injector.get(threeToken).catch(() => {
       done();
     });
+  });
+  
+  it('should throw when encountering a cyclic dependency', () => {
+    let injector = new Injector([
+      bind(oneToken).toFactory(two => two - 1,
+                              twoToken),
+      bind(twoToken).toFactory(one => one + 1,
+                              oneToken)
+    ]);
+    
+    expect(() => {
+      injector.get(oneToken);
+    }).toThrowError(CyclicDependencyError)
+    
+    expect(() => {
+      injector.get(twoToken);
+    }).toThrowError(CyclicDependencyError);
   });
 });
