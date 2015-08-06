@@ -84,4 +84,23 @@ describe('injector with factory bindings', () => {
       done();
     });
   });
+  
+  it('should only call a given factory once', (done) => {
+    let callCount = 0;
+    let injector = new Injector([
+      bind(oneToken).toFactory(() => {
+        callCount++;
+        return 1;
+      })
+    ]);
+    
+    Promise.all([
+      injector.get(oneToken),
+      injector.get(oneToken),
+      injector.get(oneToken)
+    ]).then(() => {
+      expect(callCount).toBe(1);
+      done();
+    });
+  });
 });

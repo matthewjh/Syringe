@@ -1,4 +1,5 @@
 /// <reference path="./es6-promise.d.ts"/>
+/// <reference path="./internal.d.ts"/>
 
 declare module Syringe {
   module Binding {
@@ -9,6 +10,11 @@ declare module Syringe {
     
     interface IUnprovidedBinding<T> {
       toValue(value: T): IBinding<T>;
+      
+      toClass(clazz: Internal.Static<T>): IBinding<T>;
+      toClass<T1>(clazz: Internal.StaticWithArgs<T, T1, {}, {}>, token1: IToken<T1>): IBinding<T>;
+      toClass<T1, T2>(clazz: Internal.StaticWithArgs<T, T1, T2, {}>, token1: IToken<T1>, token2: IToken<T2>): IBinding<T>;
+      toClass<T1, T2, T3>(clazz: Internal.StaticWithArgs<T, T1, T2, T3>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>): IBinding<T>;
       
       toFactory(factory: () => T): IBinding<T>;
       toFactory<T1>(factory: (dep1: T1) => T, token1: IToken<T1>): IBinding<T>;

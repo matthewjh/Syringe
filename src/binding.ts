@@ -1,7 +1,7 @@
 /// <reference path="../definitions/definitions.d.ts"/>
 /// <reference path="../definitions/api.d.ts"/>
 
-import {ValueProvider, FactoryProvider, AsyncFactoryProvider} from './provider/facade';
+import {ValueProvider, FactoryProvider, AsyncFactoryProvider, ClassProvider} from './provider/facade';
 
 class Binding<T> implements Syringe.Binding.IBinding<T> {
   public token: Syringe.IToken<T>;
@@ -30,6 +30,10 @@ class UnprovidedBinding<T> implements Syringe.Binding.IUnprovidedBinding<T> {
   
   toAsyncFactory<T1, T2, T3, T4>(factory: (...deps: any[]) => Promise<T>, ...dependencyTokens: Syringe.IToken<T>[]): Syringe.Binding.IBinding<T> {
     return new Binding(this._token, new AsyncFactoryProvider(factory, dependencyTokens));
+  }
+  
+  toClass<T1, T2, T3>(Class: Syringe.Internal.StaticWithArgs<T, T1, T2, T3>, ...dependencyTokens: Syringe.IToken<T>[]): Syringe.Binding.IBinding<T> {
+    return new Binding(this._token, new ClassProvider(Class, dependencyTokens));
   }
 }
 
