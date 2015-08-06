@@ -9,14 +9,20 @@ interface IIndexLog extends Array<boolean> {
   [index: number]: (boolean | typeof undefined);
 }
 
+interface ICache extends Array<Promise<any>> {
+  [index: number]: Promise<any>;
+}
+
 export class Injector implements Syringe.IInjector {
   private _tokens: Syringe.IToken<any>[];
   private _providers: IndexedProvider<any>[];
   private _parent: Syringe.IInjector;
+  private _cache: ICache;
   
   constructor(bindings: Syringe.Binding.IBinding<any>[], parent?: Syringe.IInjector) {
     this._tokens = [];
     this._providers = [];
+    this._cache = [];
     this._parent = parent;
     
     this._ingestBindings(bindings);
@@ -41,6 +47,17 @@ export class Injector implements Syringe.IInjector {
   }
   
   private _getByIndex<T>(index: number, indexLog: IIndexLog): Promise<T> {
+    let promise = this._cache[index];
+    
+    if (!promise) {
+      promise = this._getByIndexLookup(index, indexLog);
+      this._cache[index] = promise;
+    }
+    
+    return promise;
+  }
+  
+  private _getByIndexLookup<T>(index: number, indexLog: IIndexLog): Promise<T> {
     let provider = this._providers[index];
 
     this._detectCycle(index, indexLog);
