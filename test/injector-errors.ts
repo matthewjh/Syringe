@@ -54,4 +54,36 @@ describe('injector with missing bindings', () => {
       injector.get(twoToken);
     }).toThrowError(CyclicDependencyError);
   });
+  
+  it('should not throw when there\'s a pseudo-cyclic dependency with a parent injector', done => {
+    let parentInjector = new Injector([
+      bind(oneToken).toFactory(two => two - 1,
+                               twoToken),
+      bind(twoToken).toValue(2),
+    ])
+    
+    let injector = new Injector([
+      bind(twoToken).toFactory(three => three - 1,
+                              threeToken),
+      bind(threeToken).toFactory(one => one * 3,
+                                  oneToken)                      
+    ], parentInjector);
+    
+    expect(() => {
+      injector.get(oneToken);
+    }).not.toThrowError(CyclicDependencyError)
+    
+    expect(() => {
+      injector.get(twoToken);
+    }).not.toThrowError(CyclicDependencyError);
+    
+    Promise.all([
+      injector.get(oneToken),
+      injector.get(twoToken)
+    ]).then(([one, two]) => {
+      expect(one).toBe(1);
+      expect(two).toBe(2);
+      done()
+    });
+  });
 });

@@ -5,6 +5,10 @@ import 'es6-promise';
 import {IndexedProvider} from './provider/facade';
 import {CyclicDependencyError} from './errors';
 
+interface IIndexLog extends Array<boolean> {
+  [index: number]: (boolean | typeof undefined);
+}
+
 export class Injector implements Syringe.IInjector {
   private _tokens: Syringe.IToken<any>[];
   private _providers: IndexedProvider<any>[];
@@ -18,17 +22,17 @@ export class Injector implements Syringe.IInjector {
     this._ingestBindings(bindings);
   }
   
-  public get<T>(token: Syringe.IToken<T>, tokenLog: Syringe.IToken<T>[] = []): Promise<T> {
-    var index = this._getIndexForToken(token);
+  public get<T>(token: Syringe.IToken<T>): Promise<T> {
+    let index = this._getIndexForToken(token);
     
     if (index !== -1) {
-      return this._getByIndex(index, tokenLog);
+      return this._getByIndex(index, []);
     } else {
       return this._getFromParent(token);
     }
   }
 
-  private _getFromParent<T>(token: Syringe.IToken<T>, tokenLog: Syringe.IToken<T>[] = []): Promise<T> {
+  private _getFromParent<T>(token: Syringe.IToken<T>): Promise<T> {
      if (this._parent) {
         return this._parent.get(token);
       } else {
@@ -36,20 +40,21 @@ export class Injector implements Syringe.IInjector {
       }
   }
   
-  private _getByIndex<T>(index: number, tokenLog: Syringe.IToken<T>[]): Promise<T> {
+  private _getByIndex<T>(index: number, indexLog: IIndexLog): Promise<T> {
     let provider = this._providers[index];
 
-    this._detectCycle(this._tokens[index], tokenLog);
-    tokenLog.push(this._tokens[index]);
+    this._detectCycle(index, indexLog);
+    indexLog[index] = true;
    
     let dependencyPromises = provider.dependencyIndices.map((depIndex, i) => {
-      let clonedTokenLog = tokenLog.slice();
-      
       if (depIndex === -1) {
         let token = provider.dependencyTokens[i];
-        return this._getFromParent(token, clonedTokenLog);
+        
+        return this._getFromParent(token);
       } else {
-        return this._getByIndex(depIndex, clonedTokenLog);
+        let clonedIndexLog = indexLog.slice();
+        
+        return this._getByIndex(depIndex, clonedIndexLog);
       }
     });
     
@@ -58,31 +63,19 @@ export class Injector implements Syringe.IInjector {
     });
   }
   
-  private _getProvider<T>(token: Syringe.IToken<T>): Syringe.Provider.IProvider<T> {
-    let tokenIndex = this._tokens.indexOf(token);
-    
-    if (tokenIndex >= 0) {
-      return this._providers[tokenIndex];
-    } else {
-      return null;
-    }
-  } 
-  
   private _ingestBindings(bindings: Syringe.Binding.IBinding<any>[]): void {
-    let providers = bindings.map(b => b.provider);
-    
     this._tokens = bindings.map(b => b.token);
-    this._providers = providers.map(p => new IndexedProvider(p, token => this._getIndexForToken(token)));
+    this._providers = bindings.map(b => {
+      return new IndexedProvider(b.provider, token => this._getIndexForToken(token))
+    });
   }
   
   private _getIndexForToken(token: Syringe.IToken<any>): number {
     return this._tokens.indexOf(token);
   }
   
-  private _detectCycle(token: Syringe.IToken<any>, tokenLog: Syringe.IToken<any>[]): void {
-    let hasCycle = tokenLog.indexOf(token) !== -1;
-    
-    if (hasCycle) {
+  private _detectCycle(index: number, indexLog: IIndexLog): void {
+    if (indexLog[index]) {
       throw new CyclicDependencyError();
     }
   }
