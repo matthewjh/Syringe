@@ -2,6 +2,12 @@
 /// <reference path="./internal.d.ts"/>
 
 declare module Syringe {
+  module Decorators {
+    interface IInjectDecorator<T1, T2, T3, T4> {
+      (Class: Internal.StaticWithArgs<any, T1, T2, T3>): IAnnotatedWithTokens<T1, T2, T3>; 
+    }
+  }
+  
   module Binding {
     interface IBinding<T> { 
       token: IToken<T>;
@@ -36,6 +42,10 @@ declare module Syringe {
       get(dependencies: any[]): Promise<T>;
     }
   }
+  
+  interface IAnnotatedWithTokens<T1, T2, T3> extends Internal.StaticWithArgs<any, T1, T2, T3> {
+    ___tokens: IToken<any>[];
+  }
 
   interface IToken<T> { }
 
@@ -44,6 +54,11 @@ declare module Syringe {
   }
 
   function bind<T>(token: IToken<T>): Binding.IUnprovidedBinding<T>;
+  
+  function Inject(): Decorators.IInjectDecorator<{}, {}, {}, {}>;
+  function Inject<T1>(token1: IToken<T1>): Decorators.IInjectDecorator<T1, {}, {}, {}>;
+  function Inject<T1, T2>(token1: IToken<T1>, token2: IToken<T2>): Decorators.IInjectDecorator<T1, T2, {}, {}>;
+  function Inject<T1, T2, T3>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>): Decorators.IInjectDecorator<T1, T2, T3, {}>;
 }
 
 declare module 'syringe' {

@@ -10,6 +10,13 @@ export class ClassProvider<T> implements Syringe.Provider.IProvider<T> {
   
   constructor(Class: Syringe.Internal.Static<T>, dependencyTokens: Syringe.IToken<any>[]) {
     this.dependencyTokens = dependencyTokens;
+    
+    if (<Syringe.IToken<any>[]>Class['___tokens']) {
+      if (!(dependencyTokens && dependencyTokens.length)) {
+        this.dependencyTokens = <Syringe.IToken<any>[]>Class['___tokens'];
+      }
+    }
+
     this._Class = Class;
   }
   

@@ -2,11 +2,13 @@
 /// <reference path="../definitions/api.d.ts"/>
 
 import 'es6-promise';
-import {Injector, Token, bind} from '../src/index';
+import {Injector, Token, Inject, bind} from '../src/index';
 
 let aToken: Syringe.IToken<A> = new Token();
 let bToken: Syringe.IToken<B> = new Token();
 let cToken: Syringe.IToken<C> = new Token();
+let decoratedAToken: Syringe.IToken<DecoratedA> = new Token();
+let decoratedBToken: Syringe.IToken<DecoratedB> = new Token();
 let oneToken: Syringe.IToken<number> = new Token();
 
 class A {
@@ -25,6 +27,16 @@ class C {
   }
 }
 
+@Inject(oneToken)
+class DecoratedA {
+  constructor(public one: number) {}
+}
+
+@Inject(decoratedAToken)
+class DecoratedB {
+  constructor(public a: DecoratedA) {}
+}
+
 
 describe('injector with class bindings', () => {
   it('should correctly resolve values from tokens via class factories when tokens are passed', (done) => {
@@ -40,6 +52,26 @@ describe('injector with class bindings', () => {
     Promise.all(<Promise<any>[]>[
       injector.get(aToken),
       injector.get(bToken)
+    ]).then(([a, b]) => {
+      expect(a.one).toEqual(1);
+      expect(b.a).toBe(a);
+      done();
+    });
+  });
+  
+  it('should correctly resolve values from tokens via class factories when they decorated with tokens', (done) => {
+    let injector: Syringe.IInjector;
+    let bindings = [
+      bind(decoratedAToken).toClass(DecoratedA),
+      bind(decoratedBToken).toClass(DecoratedB),
+      bind(oneToken).toValue(1)                     
+    ];
+    
+    injector = new Injector(bindings);
+    
+    Promise.all(<Promise<any>[]>[
+      injector.get(decoratedAToken),
+      injector.get(decoratedBToken)
     ]).then(([a, b]) => {
       expect(a.one).toEqual(1);
       expect(b.a).toBe(a);
