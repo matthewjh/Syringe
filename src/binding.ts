@@ -32,7 +32,7 @@ class UnprovidedBinding<T> implements Syringe.Binding.IUnprovidedBinding<T> {
     return new Binding(this._token, new AsyncFactoryProvider(factory, dependencyTokens));
   }
   
-  toClass<T1, T2, T3>(Class: Syringe.Internal.StaticWithArgs<T, T1, T2, T3>, ...dependencyTokens: Syringe.IToken<T>[]): Syringe.Binding.IBinding<T> {
+  toClass<T1, T2, T3>(Class: Syringe.IStaticWithArgs<T, T1, T2, T3>, ...dependencyTokens: Syringe.IToken<T>[]): Syringe.Binding.IBinding<T> {
     return new Binding(this._token, new ClassProvider(Class, dependencyTokens));
   }
 }

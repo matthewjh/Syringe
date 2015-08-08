@@ -1,3 +1,4 @@
 node_modules
 built
 DS_Store
+.settings

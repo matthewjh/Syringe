@@ -21,10 +21,15 @@ gulp.task('build', function (done) {
       .pipe(gulp.dest(tsconfig.compilerOptions.outDir));
 });
 
-gulp.task('copy-definitions', function () {
+gulp.task('copy-api-definitions', function () {
   return gulp.src('./definitions/api.d.ts')
     .pipe(rename('syringe.d.ts'))
     .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('copy-definitions', ['copy-api-definitions'], function() {
+    return gulp.src('./definitions/es6-promise/**/*')
+      .pipe(gulp.dest('./dist/es6-promise'));
 });
 
 gulp.task('package', ['build', 'copy-definitions'], function (done) {

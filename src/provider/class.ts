@@ -6,7 +6,7 @@ import 'es6-promise';
 export class ClassProvider<T> implements Syringe.Provider.IProvider<T> {
   public dependencyTokens: Syringe.IToken<any>[];
   
-  private _Class: Syringe.Internal.Static<T>;
+  private _Class: Syringe.IStatic<T>;
   
   constructor(Class: Syringe.IStaticThatMaybeHasTokens<any, any, any, any>, dependencyTokens: Syringe.IToken<any>[]) {
     this.dependencyTokens = dependencyTokens;
