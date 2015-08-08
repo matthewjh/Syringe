@@ -5,10 +5,10 @@ import 'es6-promise';
 import {Injector, Token, bind} from '../src/index';
 
 describe('injector with factory bindings', () => {
-  let oneToken: Syringe.IToken<number> = new Token();
-  let twoToken: Syringe.IToken<number> = new Token();
-  let threeToken: Syringe.IToken<number> = new Token();
-  let concatenedNumbersToken: Syringe.IToken<string> = new Token();
+  let oneToken = new Token<number>();
+  let twoToken = new Token<number>();
+  let threeToken = new Token<number>();
+  let concatenedNumbersToken = new Token<string>();
   
   it('should correctly resolve values from tokens via sync factories', (done) => {
     let injector: Syringe.IInjector;

@@ -8,12 +8,12 @@ export class ClassProvider<T> implements Syringe.Provider.IProvider<T> {
   
   private _Class: Syringe.Internal.Static<T>;
   
-  constructor(Class: Syringe.Internal.Static<T>, dependencyTokens: Syringe.IToken<any>[]) {
+  constructor(Class: Syringe.IStaticThatMaybeHasTokens<any, any, any, any>, dependencyTokens: Syringe.IToken<any>[]) {
     this.dependencyTokens = dependencyTokens;
     
-    if (<Syringe.IToken<any>[]>Class['___tokens']) {
+    if (Class.___tokens) {
       if (!(dependencyTokens && dependencyTokens.length)) {
-        this.dependencyTokens = <Syringe.IToken<any>[]>Class['___tokens'];
+        this.dependencyTokens = Class.___tokens;
       }
     }
 
@@ -22,8 +22,8 @@ export class ClassProvider<T> implements Syringe.Provider.IProvider<T> {
   
   get(dependencies: any[]): Promise<T> {
     var object = Object.create(this._Class.prototype);
-    this._Class.apply(object, dependencies);
+    var returnedObject = this._Class.apply(object, dependencies);
     
-    return Promise.resolve(object);
+    return Promise.resolve(typeof returnedObject === 'object' ? returnedObject : object);
   }
 }

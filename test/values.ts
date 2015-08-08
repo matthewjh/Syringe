@@ -5,9 +5,9 @@ import 'es6-promise';
 import {Injector, Token, bind} from '../src/index';
 
 describe('injector with value bindings', () => {
-  let oneToken: Syringe.IToken<number> = new Token();
-  let twoToken: Syringe.IToken<number> = new Token();
-  let threeToken: Syringe.IToken<number> = new Token();
+  let oneToken = new Token<number>();
+  let twoToken = new Token<number>();
+  let threeToken = new Token<number>();
   
   it('should correctly resolve values from tokens', (done) => {
     let injector: Syringe.IInjector;

@@ -6,9 +6,9 @@ import {Injector, Token, bind} from '../src/index';
 import {CyclicDependencyError} from '../src/errors';
 
 describe('injector with missing bindings', () => {
-  let oneToken: Syringe.IToken<number> = new Token();
-  let twoToken: Syringe.IToken<number> = new Token();
-  let threeToken: Syringe.IToken<number> = new Token();
+  let oneToken = new Token<number>();
+  let twoToken = new Token<number>();
+  let threeToken = new Token<number>();
   
   it('should reject the returned promise when trying to get an unbound token', (done) => {
     let injector: Syringe.IInjector;

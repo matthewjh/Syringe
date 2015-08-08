@@ -4,7 +4,7 @@
 declare module Syringe {
   module Decorators {
     interface IInjectDecorator<T1, T2, T3, T4> {
-      (Class: Internal.StaticWithArgs<any, T1, T2, T3>): IAnnotatedWithTokens<T1, T2, T3>; 
+      (Class: IStaticThatMaybeHasTokens<any, T1, T2, T3>): IStaticThatMaybeHasTokens<any, T1, T2, T3>; 
     }
   }
   
@@ -17,10 +17,10 @@ declare module Syringe {
     interface IUnprovidedBinding<T> {
       toValue(value: T): IBinding<T>;
       
-      toClass(clazz: Internal.Static<T>): IBinding<T>;
-      toClass<T1>(clazz: Internal.StaticWithArgs<T, T1, {}, {}>, token1: IToken<T1>): IBinding<T>;
-      toClass<T1, T2>(clazz: Internal.StaticWithArgs<T, T1, T2, {}>, token1: IToken<T1>, token2: IToken<T2>): IBinding<T>;
-      toClass<T1, T2, T3>(clazz: Internal.StaticWithArgs<T, T1, T2, T3>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>): IBinding<T>;
+      toClass(Class: Internal.Static<T>): IBinding<T>;
+      toClass<T1>(Class: Internal.StaticWithArgs<T, T1, {}, {}>, token1: IToken<T1>): IBinding<T>;
+      toClass<T1, T2>(Class: Internal.StaticWithArgs<T, T1, T2, {}>, token1: IToken<T1>, token2: IToken<T2>): IBinding<T>;
+      toClass<T1, T2, T3>(Class: Internal.StaticWithArgs<T, T1, T2, T3>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>): IBinding<T>;
       
       toFactory(factory: () => T): IBinding<T>;
       toFactory<T1>(factory: (dep1: T1) => T, token1: IToken<T1>): IBinding<T>;
@@ -43,14 +43,22 @@ declare module Syringe {
     }
   }
   
-  interface IAnnotatedWithTokens<T1, T2, T3> extends Internal.StaticWithArgs<any, T1, T2, T3> {
-    ___tokens: IToken<any>[];
+  interface IStaticThatMaybeHasTokens<T, T1, T2, T3> extends Internal.StaticWithArgs<T, T1, T2, T3> {
+    ___tokens?: IToken<any>[];
   }
 
   interface IToken<T> { }
+  
+  interface ITokenStatic {
+    new<T>(): IToken<T>;
+  } 
 
   interface IInjector {
     get<T>(token: IToken<T>): Promise<T>;
+  }
+  
+  interface IInjectorStatic {
+    new(bindings: Binding.IBinding<any>[], parent?: IInjector): IInjector;
   }
 
   function bind<T>(token: IToken<T>): Binding.IUnprovidedBinding<T>;
@@ -59,6 +67,9 @@ declare module Syringe {
   function Inject<T1>(token1: IToken<T1>): Decorators.IInjectDecorator<T1, {}, {}, {}>;
   function Inject<T1, T2>(token1: IToken<T1>, token2: IToken<T2>): Decorators.IInjectDecorator<T1, T2, {}, {}>;
   function Inject<T1, T2, T3>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>): Decorators.IInjectDecorator<T1, T2, T3, {}>;
+  
+  var Injector: IInjectorStatic;
+  var Token: ITokenStatic;
 }
 
 declare module 'syringe' {
