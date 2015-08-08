@@ -37,7 +37,8 @@ gulp.task('package', ['build', 'copy-definitions'], function (done) {
   var browserify = require('browserify');
   var b = browserify({
     entries: 'built/src/index.js',
-    debug: false
+    debug: false,
+    bare: true
   });
   
   return b
