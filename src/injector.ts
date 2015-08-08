@@ -28,7 +28,7 @@ export class Injector implements Syringe.IInjector {
    
     this._ingestBindings(
       bindings, 
-      this._getImplicitBindings(bindings)
+      this._getLazyBindings(bindings)
     );
   }
   
@@ -95,12 +95,6 @@ export class Injector implements Syringe.IInjector {
     this._providers = allBindings.map(b => {
       return new IndexedProvider(b.provider, token => this._getIndexForToken(token))
     });
-  }
-  
-  private _getImplicitBindings(bindings: Syringe.Binding.IBinding<any>[]): Syringe.Binding.IBinding<any>[] {
-    return [].concat(
-      this._getLazyBindings(bindings)
-    );
   }
   
   private _getLazyBindings(bindings: Syringe.Binding.IBinding<any>[]): Syringe.Binding.IBinding<any>[] {

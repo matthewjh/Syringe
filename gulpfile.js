@@ -1,6 +1,10 @@
 var gulp = require('gulp');
 var ts = require('gulp-typescript');
 var rimraf = require('gulp-rimraf');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+var rename = require('gulp-rename');
+var uglify = require('gulp-uglify');
 var exec = require('child_process').exec;
 
 gulp.task('clean-build-folder', function () {
@@ -8,12 +12,30 @@ gulp.task('clean-build-folder', function () {
     .pipe(rimraf());
 });
 
-gulp.task('build', ['clean-build-folder'], function (done) {
+gulp.task('build', function (done) {
   var tsconfig = require("./tsconfig.json");
   var filesGlob = tsconfig.filesGlob;
   return gulp.src(filesGlob)
       .pipe(ts(tsconfig.compilerOptions))
       .pipe(gulp.dest(tsconfig.compilerOptions.outDir));
+});
+
+gulp.task('package', ['build'], function (done) {
+  var outFolder = './dist';
+  var browserify = require('browserify');
+  var b = browserify({
+    entries: 'built/src/index.js',
+    debug: false
+  });
+  
+  return b
+    .bundle()
+    .pipe(source('syringe.js'))
+    .pipe(buffer())
+    .pipe(gulp.dest(outFolder))
+    .pipe(uglify())
+    .pipe(rename({ extname: '.min.js' }))
+    .pipe(gulp.dest(outFolder));
 });
 
 gulp.task('unit', ['build'], function () {

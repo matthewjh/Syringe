@@ -21,13 +21,17 @@
     "es6-promise": "^2.3.0",
     "gulp": "^3.9.0",
     "gulp-karma": "0.0.4",
+    "gulp-rename": "^1.2.2",
     "gulp-rimraf": "^0.1.1",
     "gulp-typescript": "^2.8.0",
+    "gulp-uglify": "^1.2.0",
     "jasmine-core": "^2.3.4",
     "karma": "^0.13.3",
     "karma-browserify": "^4.2.1",
     "karma-chrome-launcher": "^0.2.0",
     "karma-jasmine": "^0.3.6",
-    "typescript": "^1.6.0-dev.20150805"
+    "typescript": "^1.6.0-dev.20150805",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
   }
 }
