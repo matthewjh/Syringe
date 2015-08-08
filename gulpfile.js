@@ -5,6 +5,7 @@ var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
+var copy = require('gulp-copy');
 var exec = require('child_process').exec;
 
 gulp.task('clean-build-folder', function () {
@@ -20,7 +21,13 @@ gulp.task('build', function (done) {
       .pipe(gulp.dest(tsconfig.compilerOptions.outDir));
 });
 
-gulp.task('package', ['build'], function (done) {
+gulp.task('copy-definitions', function () {
+  return gulp.src('./definitions/api.d.ts')
+    .pipe(rename('syringe.d.ts'))
+    .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('package', ['build', 'copy-definitions'], function (done) {
   var outFolder = './dist';
   var browserify = require('browserify');
   var b = browserify({

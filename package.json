@@ -1,8 +1,8 @@
 {
-  "name": "syringe",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js\\",
+  "name": "syringe.ts",
+  "version": "0.0.1",
+  "description": "Type-safe dependency injection library for TypeScript",
+  "main": "dist/syringe.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/matthewjh/Syringe.git"
   },
-  "author": "",
+  "author": "Matthew Hill",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/matthewjh/Syringe/issues"
@@ -20,6 +20,7 @@
     "browserify": "^11.0.1",
     "es6-promise": "^2.3.0",
     "gulp": "^3.9.0",
+    "gulp-copy": "0.0.2",
     "gulp-karma": "0.0.4",
     "gulp-rename": "^1.2.2",
     "gulp-rimraf": "^0.1.1",
