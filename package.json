@@ -1,6 +1,6 @@
 {
   "name": "syringe.ts",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Type-safe dependency injection library for TypeScript",
   "main": "dist/syringe.js",
   "scripts": {
