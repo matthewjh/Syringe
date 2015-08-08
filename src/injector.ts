@@ -3,6 +3,7 @@
 
 import 'es6-promise';
 import {IndexedProvider} from './provider/facade';
+import {bind} from './binding';
 import {CyclicDependencyError} from './errors';
 
 interface IIndexLog extends Array<boolean> {
@@ -24,8 +25,11 @@ export class Injector implements Syringe.IInjector {
     this._providers = [];
     this._cache = [];
     this._parent = parent;
-    
-    this._ingestBindings(bindings);
+   
+    this._ingestBindings(
+      bindings, 
+      this._getImplicitBindings(bindings)
+    );
   }
   
   public get<T>(token: Syringe.IToken<T>): Promise<T> {
@@ -80,15 +84,33 @@ export class Injector implements Syringe.IInjector {
     });
   }
   
-  private _ingestBindings(bindings: Syringe.Binding.IBinding<any>[]): void {
-    this._tokens = bindings.map(b => b.token);
-    this._providers = bindings.map(b => {
+  private _getIndexForToken(token: Syringe.IToken<any>): number {
+    return this._tokens.indexOf(token);
+  }
+  
+  private _ingestBindings(...bindings: Syringe.Binding.IBinding<any>[][]): void {
+    let allBindings = [].concat(...bindings);
+     
+    this._tokens = allBindings.map(b => b.token);
+    this._providers = allBindings.map(b => {
       return new IndexedProvider(b.provider, token => this._getIndexForToken(token))
     });
   }
   
-  private _getIndexForToken(token: Syringe.IToken<any>): number {
-    return this._tokens.indexOf(token);
+  private _getImplicitBindings(bindings: Syringe.Binding.IBinding<any>[]): Syringe.Binding.IBinding<any>[] {
+    return [].concat(
+      this._getLazyBindings(bindings)
+    );
+  }
+  
+  private _getLazyBindings(bindings: Syringe.Binding.IBinding<any>[]): Syringe.Binding.IBinding<any>[] {
+    return bindings.map(b => bind(b.token.asLazy).toFactory(() => {
+      return {
+        get: () => {
+          return this.get(b.token);
+        }
+      }
+    }));
   }
   
   private _detectCycle(index: number, indexLog: IIndexLog): void {

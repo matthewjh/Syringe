@@ -47,11 +47,17 @@ declare module Syringe {
     ___tokens?: IToken<any>[];
   }
 
-  interface IToken<T> { }
+  interface IToken<T> { 
+    asLazy: IToken<ILazy<T>>;  
+  }
   
   interface ITokenStatic {
     new<T>(): IToken<T>;
-  } 
+  }
+  
+  interface ILazy<T> {
+    get(): Promise<T>;
+  }
 
   interface IInjector {
     get<T>(token: IToken<T>): Promise<T>;
