@@ -38,7 +38,7 @@ gulp.task('package', ['build', 'copy-definitions'], function (done) {
   var b = browserify({
     entries: 'built/src/index.js',
     debug: false,
-    standalone: 'syringe.ts'
+    standalone: 'syringe'
   });
   
   return b
