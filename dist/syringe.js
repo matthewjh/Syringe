@@ -77,6 +77,16 @@ var CyclicDependencyError = (function (_super) {
     return CyclicDependencyError;
 })(Error);
 exports.CyclicDependencyError = CyclicDependencyError;
+var NoBoundTokenError = (function (_super) {
+    __extends(NoBoundTokenError, _super);
+    function NoBoundTokenError() {
+        _super.call(this);
+        this.name = 'NoBoundTokenError';
+        this.message = 'No bound token found during a token lookup. Check that all of your dependencies are bound';
+    }
+    return NoBoundTokenError;
+})(Error);
+exports.NoBoundTokenError = NoBoundTokenError;
 
 },{}],4:[function(require,module,exports){
 /// <reference path="../definitions/api.d.ts"/>
@@ -118,7 +128,8 @@ var Injector = (function () {
             return this._parent.get(token);
         }
         else {
-            return Promise.reject(new Error("No provider found for token " + token + " on this Injector"));
+            var error = new errors_1.NoBoundTokenError();
+            return Promise.reject(error);
         }
     };
     Injector.prototype._getByIndex = function (index, indexLog) {
@@ -166,12 +177,10 @@ var Injector = (function () {
     };
     Injector.prototype._getLazyBindings = function (bindings) {
         var _this = this;
-        return bindings.map(function (b) { return binding_1.bind(b.token.asLazy).toFactory(function () {
-            return {
-                get: function () {
-                    return _this.get(b.token);
-                }
-            };
+        return bindings.map(function (b) { return binding_1.bind(b.token.asLazy).toValue({
+            get: function () {
+                return _this.get(b.token);
+            }
         }); });
     };
     Injector.prototype._detectCycle = function (index, indexLog) {
@@ -236,7 +245,7 @@ var AsyncFactoryProvider = (function () {
         this._factory = factory;
     }
     AsyncFactoryProvider.prototype.get = function (dependencies) {
-        return this._factory.apply(this, dependencies);
+        return Promise.resolve(this._factory.apply(this, dependencies));
     };
     return AsyncFactoryProvider;
 })();
