@@ -11,7 +11,7 @@
     "url": "git+https://github.com/matthewjh/Syringe.git"
   },
   "author": "Matthew Hill",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/matthewjh/Syringe/issues"
   },
