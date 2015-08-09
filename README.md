@@ -260,7 +260,7 @@ class A {
   	this._b = b;
   }
 
-  foo() {
+  foo(): void {
   	this._b.foo();
   }
 }
@@ -273,7 +273,7 @@ class B {
   	this._a = a;
   }
 
-  foo() {
+  foo(): void {
   	console.log('foo');
   }
 }
@@ -324,7 +324,7 @@ class B {
   	this._a = a;
   }
 
-  foo() {
+  foo(): void {
   	console.log('foo');
   }
 }
