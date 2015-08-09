@@ -2,6 +2,21 @@
 
 Syringe is a dependency injection library for TypeScript, with a binding syntax inspired by Angular 2's DI system. Unlike other DI libraries, it has a lot of built-in type-safety. It's also fundamentally asynchronous, making handling asynchronous dependencies painless.
 
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [Syringe](#)
+	- [Installation](#)
+	- [Basic Usage](#)
+	- [Type-safe? How so?](#)
+	- [Bindings](#)
+		- [toValue](#)
+		- [toFactory](#)
+		- [toAsyncFactory](#)
+		- [toClass](#)
+	- [Injector hierachies](#)
+	- [Lazy Dependencies](#)
+	- [Using in JavaScript applications](#)
+
 ## Installation
 
 `npm install syringe.ts --save-dev`
