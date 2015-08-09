@@ -344,7 +344,7 @@ injector.get(aToken).then(a => {
  You can use Syringe for DI in your JavaScript code, though you will then of course not get the benefit of type-safety.
  
  ````javascript
- <script href="https://raw.githubusercontent.com/matthewjh/Syringe/master/dist/syringe.min.js" type="text/javascript"></script>
+ <script src="https://raw.githubusercontent.com/matthewjh/Syringe/master/dist/syringe.min.js" type="text/javascript"></script>
  
 <script type="text/javascript">
   var oneToken = new syringe.Token();
