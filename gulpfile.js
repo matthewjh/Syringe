@@ -6,7 +6,9 @@ var buffer = require('vinyl-buffer');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var copy = require('gulp-copy');
+var concat = require('gulp-concat-util');
 var exec = require('child_process').exec;
+var fs = require('fs');
 
 gulp.task('clean-build-folder', function () {
   return gulp.src('built/**/*', { read: false })
@@ -45,8 +47,10 @@ gulp.task('package', ['build', 'copy-definitions'], function (done) {
     .bundle()
     .pipe(source('syringe.js'))
     .pipe(buffer())
+    .pipe(concat.header(fs.readFileSync('./license-comment.txt')))
     .pipe(gulp.dest(outFolder))
     .pipe(uglify())
+    .pipe(concat.header(fs.readFileSync('./license-comment.txt')))
     .pipe(rename({ extname: '.min.js' }))
     .pipe(gulp.dest(outFolder));
 });

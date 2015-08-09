@@ -20,6 +20,7 @@
     "browserify": "^11.0.1",
     "es6-promise": "^2.3.0",
     "gulp": "^3.9.0",
+    "gulp-concat-util": "^0.5.2",
     "gulp-copy": "0.0.2",
     "gulp-karma": "0.0.4",
     "gulp-rename": "^1.2.2",
