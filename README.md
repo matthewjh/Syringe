@@ -32,7 +32,7 @@ injector.get(twoToken).then(two => {
 
 In the example above, TypeScript knows that `injector.get(twoToken)` returns a `Promise<number>`, because the type of the dependency represented by `twoToken` is known to be `number`. 
 
-Similarly, if you try to take a string and bind it to `oneValue`, TypeScript will error out. This makes Syringe far more powerful than other TS/JS DI libraries, where calling `injector.get(someTokenOrId)` returns `any`, forcing you to cast an assume that the types will be correct at runtime. It also means that when binding classes or factories, if the parameters to the class constructor or factory change from that of the binding tokens in type or arity, TypeScript gives an error. 
+Similarly, if you try to take a string and bind it to `oneValue`, TypeScript will error out. This makes Syringe far more powerful than other TS/JS DI libraries, where calling `injector.get(someTokenOrId)` returns `any`, forcing you to cast an assume that the types will be correct at runtime. It also means that when binding classes or factories, if the parameters to the class constructor or factory change from that of the binding tokens in type or arity, or vice-versa, TypeScript gives an error. 
 
 
 ## Bindings
@@ -84,6 +84,49 @@ injector.get(helloWorldToken).then(helloWorld => {
 
 ````
 
+### toAsyncFactory
+
+Thanks to Syringe being asynchronous from the ground up, handling asynchronous dependencies is seamless. `toAsyncFactory` is similar to `toFactory` but takes a factory returning a `Promise`. This means that if you have a `string` dependency whose value is dependent on an async file read or XHR request, that can be done in the async factory and Syringe will simply wait for the promise to resolve prior to constructing dependent values.
+
+````typescript
+/// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
+
+import {Injector, Token, bind} from 'syringe.ts';
+
+interface ICar {
+   name: string;
+}
+
+let carsListToken = new Token<ICar[]>();
+let carNamesToken = new Token<string>();
+
+let injector = new Injector([
+  bind(carsListToken).toAsyncFactory(() => {
+    // Imagine doing an XHR or file read here to get a list of cars...
+    
+    return new Promise(resolve => {
+       setTimeout(() => {
+        resolve([
+          {name: 'Vauxhall Corsa'},
+          {name: 'Ford Fiesta'}
+        ]);
+       }, 100);
+    });
+  }),
+  
+  bind(carNamesToken).toFactory((carsList) => {
+    // The type of carsList is ICar[]. No need to handle promises inside of here -- which is great for testing! Syringe handles the promise.
+    
+    return carsList.map(car => car.name).join(', '); 
+  }, carsListToken)
+]);
+
+injector.get(carNamesToken).then(carNames => {
+  expect(carNamesToken).toEqual('Vauxhall Corsa, Ford Fiesta');
+});
+````
+
+This is an extremely powerful feature. It means that your code will no longer have to handle Promises as far as dependencies are concerned, because Syringe will wait for them to resolve before constructing an object dependent on it. This also means that when testing your code you no longer have to pass in promises, resolve them, reject them, etc, which can get a bit dirty. You just pass in a synchronous value.
 
 ````typescript
 /// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
