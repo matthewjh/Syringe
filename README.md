@@ -16,7 +16,7 @@ Syringe is a dependency injection library for TypeScript, with a binding syntax 
 	- [Injector Hierachies](#injector-hierachies)
 	- [Lazy Dependencies](#lazy-dependencies)
 	- [Using in JavaScript applications](#using-in-javascript-applications)
-  - [License](#license)
+- [License](#license)
 
 ## Installation
 
@@ -379,7 +379,7 @@ injector.get(aToken).then(a => {
 </script>
  ````
  
- ## License
+# License
  
  ````
 The MIT License (MIT)
