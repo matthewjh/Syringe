@@ -130,7 +130,7 @@ This is an extremely powerful feature. It means that your code will no longer ha
 
 ### toClass
 
-`toClass` creates a binding between a token and a class, meaning that the dependency will be created by constructing a new instance of the class. The class's dependencies will be passed into its constructor.
+`toClass` creates a binding between a token and a class, meaning that the dependency will be created by constructing a new instance of that class. The class's dependencies will be passed into its constructor.
 
 ````typescript
 /// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
@@ -209,3 +209,134 @@ injector.get(logToken).then(log => {
 ````
 
 Note that if Syringe has a class dependency that is both decorated with `Inject` and has inline dependency tokens in the `toClass` call, the latter will take precendence.
+
+## Injector hierachies
+
+You can create `Injector` hierarchies by passing in a parent `Injector` when creating a new `Injector`:
+
+````typescript
+/// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
+
+let oneToken = new Token<number>();
+let twoToken = new Token<number>();
+
+import {Injector, Token, bind} from 'syringe.ts';
+
+let parentInjector = new Injector([
+   bind(oneToken).toValue(1)
+]);
+ 
+let childInjector = new Injector([
+  bind(twoToken).toFactory(one => one + 1,
+                            oneToken)
+], parentInjector);
+
+injector.get(twoToken).then(two => {
+  expect(two).toBe(2);
+});
+````
+
+This works as you'd expect in that if you `get` a token from a child injector and it's not bound on the child, the parent is then checked. Here, when we get `twoToken`'s value, the dependency on `oneToken` in `twoToken`'s factory will be retrieved from the parent injector because it is not bound on the child.
+
+## Lazy Dependencies
+
+Sometimes it is desirable to construct a dependency in a context after that context has been created by the injector. For this, Syringe has a lazy feature, meaning that the dependency will not be retrieved until `.get` is called on the lazy instance. 
+
+This can sometimes be useful to avoid cyclic dependency errors, if you know that a dependency is not needed until sometime after the injector has created other dependencies:
+
+````typescript
+/// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
+
+import {Injector, Inject, Token, bind} from 'syringe.ts';
+
+let aToken = new Token<A>();
+let bToken = new Token<B>();
+
+@Inject(bToken)
+class A {
+  private _b: B;
+
+  constructor(b: B) {
+  	this._b = b;
+  }
+
+  foo() {
+  	this._b.foo();
+  }
+}
+
+@Inject(aToken)
+class B {
+  private _a: A;
+
+  constructor(a: A) {
+  	this._a = a;
+  }
+
+  foo() {
+  	console.log('foo');
+  }
+}
+
+let injector = new Injector([
+  bind(aToken).toClass(A),
+  bind(bToken).toClass(B)
+]);
+
+// Throws CyclicDependencyError, because A depends on B and B depends on A.
+injector.get(aToken).then(a => {
+  a.foo();
+});
+```` 
+
+but, if we know that we don't need a reference to B prior to calling `A#foo`, we can specify that we want `bToken` to be injected lazily.
+
+Note that this means that the client code has to handle the asynchrony usually handled by the injector behind the scenes.
+
+````typescript
+/// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
+
+import {Injector, Inject, Token, ILazy, bind} from 'syringe.ts';
+
+let aToken = new Token<A>();
+let bToken = new Token<B>();
+
+@Inject(bToken.asLazy)
+class A {
+  private _b: ILazy<B>;
+
+  constructor(b: ILazy<B>) {
+  	this._b = b;
+  }
+
+  foo(): Promise<void> {
+  	return this._b.get().then(b => {
+  		b.foo();
+  	});
+  }
+}
+
+@Inject(aToken)
+class B {
+  private _a: A;
+
+  constructor(a: A) {
+  	this._a = a;
+  }
+
+  foo() {
+  	console.log('foo');
+  }
+}
+
+let injector = new Injector([
+  bind(aToken).toClass(A),
+  bind(bToken).toClass(B)
+]);
+
+injector.get(aToken).then(a => {
+  return a.foo();
+});
+````
+
+ 
