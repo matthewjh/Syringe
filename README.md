@@ -169,7 +169,7 @@ injector.get(logToken).then(log => {
 });
 ````
 
-You can also specify a class's dependency tokens by decorating it with `Inject`. Not that this requires that the decorators flag (`--experimentalDecorators`) be passed to the TypeScript compiler and that you target at least ES5 (--target es5):
+You can also specify a class's dependency tokens by decorating it with `Inject`. Note that this requires that the decorators flag (`--experimentalDecorators`) be passed to the TypeScript compiler and that you target at least ES5 (--target es5):
 
 ````typescript
 /// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
@@ -339,4 +339,21 @@ injector.get(aToken).then(a => {
 });
 ````
 
+ ## Using in JavaScript applications
  
+ You can use Syringe for DI in your JavaScript code, though you will then of course not get the benefit of type-safety.
+ 
+ ````javascript
+ <script href="https://raw.githubusercontent.com/matthewjh/Syringe/master/dist/syringe.min.js" type="text/javascript"></script>
+ 
+<script type="text/javascript">
+  var oneToken = new syringe.Token();
+  var injector = new syringe.Injector([
+    syringe.bind(oneToken).toValue(5)
+  ]);
+  
+  injector.get(oneToken).then(function(one) {
+    console.log(one);
+  });
+</script>
+ ````
