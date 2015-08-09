@@ -5,17 +5,17 @@ Syringe is a dependency injection library for TypeScript, with a binding syntax 
 ##Table of Contents
 
 - [Syringe](#)
-	- [Installation](#)
-	- [Basic Usage](#)
-	- [Type-safe? How so?](#)
-	- [Bindings](#)
-		- [toValue](#)
-		- [toFactory](#)
-		- [toAsyncFactory](#)
-		- [toClass](#)
-	- [Injector hierachies](#)
-	- [Lazy Dependencies](#)
-	- [Using in JavaScript applications](#)
+	- [Installation](#installation)
+	- [Basic Usage](#basic-usage)
+	- [Type-safe? How so?](#type-safe-how-so)
+	- [Bindings](#bindings)
+		- [toValue](#tovalue)
+		- [toFactory](#tofactory)
+		- [toAsyncFactory](#toasyncfactory)
+		- [toClass](#toclass)
+	- [Injector Hierachies](#injector-hierachies)
+	- [Lazy Dependencies](#lazy-dependencies)
+	- [Using in JavaScript applications](#using-in-javascript-applications)
 
 ## Installation
 
@@ -230,7 +230,7 @@ injector.get(logToken).then(log => {
 
 Note that if Syringe has a class dependency that is both decorated with `Inject` and has inline dependency tokens in the `toClass` call, the latter will take precendence.
 
-## Injector hierachies
+## Injector Hierachies
 
 You can create `Injector` hierarchies by passing in a parent `Injector` when creating a new `Injector`:
 
