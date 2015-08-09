@@ -126,7 +126,11 @@ injector.get(carNamesToken).then(carNames => {
 });
 ````
 
-This is an extremely powerful feature. It means that your code will no longer have to handle Promises as far as dependencies are concerned, because Syringe will wait for them to resolve before constructing an object dependent on it. This also means that when testing your code you no longer have to pass in promises, resolve them, reject them, etc, which can get a bit dirty. You just pass in a synchronous value.
+This is an extremely powerful feature. It means that your code will no longer have to handle Promises as far as dependencies are concerned, because Syringe will wait for them to resolve before constructing objects dependent on them. This also means that when testing your code you no longer have to pass in promises, resolve them, reject them, etc, which can get a bit dirty. You just pass in a synchronous value.
+
+### toClass
+
+`toClass` creates a binding between a token and a class, meaning that the dependency will be created by constructing a new instance of the class. The class's dependencies will be passed into its constructor.
 
 ````typescript
 /// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
@@ -138,18 +142,70 @@ interface ILog {
 }
 
 let logToken = new Token<ILog>();
-
+let isDevelopmentModeToken = new Token<boolean>();
+  
 class MyLog implements ILog {
+  private _isDevelopmentMode: boolean;
+
+  constructor(isDevelopmentMode: boolean) {
+  	this._isDevelopmentMode = isDevelopmentMode;
+  }
+
   info(message: string): void {
-    console.log(message);
+    if (this._isDevelopmentMode) {
+      console.log(message);
+    }
   }
 }       
 
 let injector = new Injector([
-  bind(logToken).toClass(MyLog)
+  bind(logToken).toClass(MyLog,
+                         isDevelopmentModeToken),
+  bind(isDevelopmentModeToken).toValue(true)
 ]);
 
 injector.get(logToken).then(log => {
   log.info('Hi!');
 });
 ````
+
+You can also specify a class's dependency tokens by decorating it with `Inject`. Not that this requires that the decorators flag (`--experimentalDecorators`) be passed to the TypeScript compiler and that you target at least ES5 (--target es5):
+
+````typescript
+/// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
+
+import {Injector, Inject, Token, bind} from 'syringe.ts';
+
+interface ILog {
+  info(message: string): void;
+}
+
+let logToken = new Token<ILog>();
+let isDevelopmentModeToken = new Token<boolean>();
+  
+@Inject(isDevelopmentModeToken)
+class MyLog implements ILog {
+  private _isDevelopmentMode: boolean;
+
+  constructor(isDevelopmentMode: boolean) {
+  	this._isDevelopmentMode = isDevelopmentMode;
+  }
+
+  info(message: string): void {
+    if (this._isDevelopmentMode) {
+      console.log(message);
+    }
+  }
+}       
+
+let injector = new Injector([
+  bind(logToken).toClass(MyLog),
+  bind(isDevelopmentModeToken).toValue(true)
+]);
+
+injector.get(logToken).then(log => {
+  log.info('Hi!');
+});
+````
+
+Note that if Syringe has a class dependency that is both decorated with `Inject` and has inline dependency tokens in the `toClass` call, the latter will take precendence.
