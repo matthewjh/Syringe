@@ -85,6 +85,6 @@ declare module Syringe {
   var Token: ITokenStatic;
 }
 
-declare module 'syringe' {
+declare module 'syringe.ts' {
   export = Syringe;
 }
