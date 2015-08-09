@@ -24,15 +24,15 @@ class UnprovidedBinding<T> implements Syringe.Binding.IUnprovidedBinding<T> {
     return new Binding(this._token, new ValueProvider(value));
   }
   
-  toFactory<T1, T2, T3, T4>(factory: (...deps: any[]) => T, ...dependencyTokens: Syringe.IToken<T>[]): Syringe.Binding.IBinding<T> {
+  toFactory<T1, T2, T3, T4, T5, T6, T7, T8>(factory: (...deps: any[]) => T, ...dependencyTokens: Syringe.IToken<any>[]): Syringe.Binding.IBinding<T> {
     return new Binding(this._token, new FactoryProvider(factory, dependencyTokens));
   }
   
-  toAsyncFactory<T1, T2, T3, T4>(factory: (...deps: any[]) => Promise<T>, ...dependencyTokens: Syringe.IToken<T>[]): Syringe.Binding.IBinding<T> {
+  toAsyncFactory<T1, T2, T3, T4, T5, T6, T7, T8>(factory: (...deps: any[]) => Promise<T>, ...dependencyTokens: Syringe.IToken<any>[]): Syringe.Binding.IBinding<T> {
     return new Binding(this._token, new AsyncFactoryProvider(factory, dependencyTokens));
   }
   
-  toClass<T1, T2, T3>(Class: Syringe.IStaticWithArgs<T, T1, T2, T3>, ...dependencyTokens: Syringe.IToken<T>[]): Syringe.Binding.IBinding<T> {
+  toClass<T1, T2, T3, T4, T5, T6, T7, T8>(Class: Syringe.IStaticWithArgs<T, T1, T2, T3, T4, T5, T6, T7, T8>, ...dependencyTokens: Syringe.IToken<any>[]): Syringe.Binding.IBinding<T> {
     return new Binding(this._token, new ClassProvider(Class, dependencyTokens));
   }
 }

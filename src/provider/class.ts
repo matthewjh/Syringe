@@ -8,7 +8,7 @@ export class ClassProvider<T> implements Syringe.Provider.IProvider<T> {
   
   private _Class: Syringe.IStatic<T>;
   
-  constructor(Class: Syringe.IStaticThatMaybeHasTokens<any, any, any, any>, dependencyTokens: Syringe.IToken<any>[]) {
+  constructor(Class: Syringe.IStaticThatMaybeHasTokens<any, any, any, any, any, any, any, any, any>, dependencyTokens: Syringe.IToken<any>[]) {
     this.dependencyTokens = dependencyTokens;
     
     if (Class.___tokens) {
