@@ -1,11 +1,11 @@
 # Syringe
 `npm install syringe.ts --save-dev`
 
-# What is it
+## What is it
 
 Syringe is a dependency injection library for TypeScript, with a binding syntax inspired by Angular 2's DI system. Unlike other DI libraries, it has a lot of built-in type-safety. It's also fundamentally asynchronous, making handling asynchronous dependencies painless.
 
-# Basic Usage
+## Basic Usage
 
 To begin using Syringe, you need to create an `Injector`. An `Injector` has bindings, which bind `Token`s to a 'recipe' explicating how to the injector should construct that dependency (e.g. via new'ing up a class, a factory, etc.).
 
@@ -28,9 +28,13 @@ injector.get(twoToken).then(two => {
 });
 ````
  
-# Type-safe? How so?
+## Type-safe? How so?
 
-In the example above, TypeScript knows that `injector.get(twoToken)` returns a `Promise<number>`, because the type of the dependency represented by `twoToken` is known to be `number`. Likewise, if you try to take a string and bind it to `oneValue`, TypeScript will error out. This principal of type assignability between the type of a token and values bound to and obtained from them is one of main features of Syringe.
+In the example above, TypeScript knows that `injector.get(twoToken)` returns a `Promise<number>`, because the type of the dependency represented by `twoToken` is known to be `number`. 
+
+Similarly, if you try to take a string and bind it to `oneValue`, TypeScript will error out. This makes Syringe far more powerful than other TS/JS DI libraries, where calling `injector.get(someTokenOrId)` returns `any`. It also means that when binding classes or factories, if the parameters to the class constructor or factory change from that of the binding tokens in type or arity, TypeScript gives an error. 
+
+
 
 ````typescript
 /// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
