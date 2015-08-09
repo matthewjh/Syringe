@@ -3,7 +3,7 @@
 
 import 'es6-promise';
 import {Injector, Token, bind} from '../src/index';
-import {CyclicDependencyError} from '../src/errors';
+import {CyclicDependencyError, NoBoundTokenError} from '../src/errors';
 
 describe('injector with missing bindings', () => {
   let oneToken = new Token<number>();
@@ -18,7 +18,8 @@ describe('injector with missing bindings', () => {
     
     injector = new Injector(bindings);
     
-    injector.get(twoToken).catch(() => {
+    injector.get(twoToken).catch((error) => {
+      expect(error).toEqual(jasmine.any(NoBoundTokenError));
       done();
     });
   });
@@ -33,7 +34,8 @@ describe('injector with missing bindings', () => {
     
     injector = new Injector(bindings);
     
-    injector.get(threeToken).catch(() => {
+    injector.get(threeToken).catch((error) => {
+      expect(error).toEqual(jasmine.any(NoBoundTokenError));
       done();
     });
   });

@@ -4,7 +4,7 @@
 import 'es6-promise';
 import {IndexedProvider} from './provider/facade';
 import {bind} from './binding';
-import {CyclicDependencyError} from './errors';
+import {CyclicDependencyError, NoBoundTokenError} from './errors';
 
 interface IIndexLog extends Array<boolean> {
   [index: number]: (boolean | typeof undefined);
@@ -46,7 +46,9 @@ export class Injector implements Syringe.IInjector {
      if (this._parent) {
         return this._parent.get(token);
       } else {
-        return Promise.reject(new Error(`No provider found for token ${token} on this Injector`)); 
+        let error = new NoBoundTokenError();
+        
+        return Promise.reject(error); 
       }
   }
   
