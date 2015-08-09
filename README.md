@@ -14,6 +14,9 @@ To begin using Syringe, you need to create an `Injector`. An `Injector` has bind
 
 import {Injector, Token, bind} from 'syringe.ts';
 
+let oneToken = new Token<number>();
+let twoToken = new Token<number>();
+
 let injector = new Injector([
   bind(oneToken).toValue(1);
   bind(twoToken).toFactory(one => one + one,
@@ -25,6 +28,9 @@ injector.get(twoToken).then(two => {
 });
 ````
  
+# Type-safe? How so?
+
+In the example above, TypeScript knows that `injector.get(twoToken)` returns a `Promise<number>`, because the type of the dependency represented by `twoToken` is known to be `number`. Likewise, if you try to take a string and bind it to `oneValue`, TypeScript will error out. This principal of type assignability between the type of a token and values bound to and obtained from them is one of main features of Syringe.
 
 ````typescript
 /// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
