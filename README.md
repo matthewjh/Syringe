@@ -1,9 +1,12 @@
 # Syringe
-`npm install syringe.ts --save-dev`
-
-## What is it
 
 Syringe is a dependency injection library for TypeScript, with a binding syntax inspired by Angular 2's DI system. Unlike other DI libraries, it has a lot of built-in type-safety. It's also fundamentally asynchronous, making handling asynchronous dependencies painless.
+
+## Installation
+
+`npm install syringe.ts --save-dev`
+
+Syringe is packaged as a UMD module, so it can be used via CommonJS, AMD, or even as a global (`window.syringe`). Ensure that you include the Syringe API definition file (`/node_modules/syringe.ts/dist/syringe.d.ts`) either via reference tags or by including it in the files you're passing to the TypeScript compiler. 
 
 ## Basic Usage
 
