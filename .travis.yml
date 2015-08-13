@@ -3,4 +3,4 @@ node_js:
   - "stable"
 before_script:
   - npm install -g gulp
-script: gulp unit
+script: gulp unit.ci
