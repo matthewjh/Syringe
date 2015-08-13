@@ -2,7 +2,17 @@
   "name": "syringe.ts",
   "version": "0.0.18",
   "description": "Type-safe dependency injection library for TypeScript",
-  "keywords": ["typescript", "di", "dependency injection", "dependency", "injection", "ioc", "type-safe", "typesafe", "injector"],
+  "keywords": [
+    "typescript",
+    "di",
+    "dependency injection",
+    "dependency",
+    "injection",
+    "ioc",
+    "type-safe",
+    "typesafe",
+    "injector"
+  ],
   "main": "dist/syringe.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -33,6 +43,7 @@
     "karma-browserify": "^4.2.1",
     "karma-chrome-launcher": "^0.2.0",
     "karma-jasmine": "^0.3.6",
+    "karma-sauce-launcher": "^0.2.14",
     "typescript": "^1.6.0-dev.20150805",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
