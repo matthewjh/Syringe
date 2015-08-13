@@ -18,6 +18,9 @@ gulp.task('clean-build-folder', function () {
 gulp.task('build', function (done) {
   var tsconfig = require("./tsconfig.json");
   var filesGlob = tsconfig.filesGlob;
+   
+  tsconfig.compilerOptions.typescript = require('typescript');
+ 
   return gulp.src(filesGlob)
       .pipe(ts(tsconfig.compilerOptions))
       .pipe(gulp.dest(tsconfig.compilerOptions.outDir));
