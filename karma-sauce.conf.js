@@ -35,7 +35,7 @@ module.exports = function (config) {
 
   config.set({
     sauceLabs: {
-      testName: 'Web App Unit Tests'
+      testName: 'Syringe.ts tests'
     },
     customLaunchers: customLaunchers,
     browsers: Object.keys(customLaunchers),
