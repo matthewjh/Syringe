@@ -10,6 +10,23 @@ var concat = require('gulp-concat-util');
 var exec = require('child_process').exec;
 var fs = require('fs');
 
+function runKarmaTests(confFile) {
+  var karma = require('gulp-karma');
+  var testFiles = [
+    'built/test/**/*.js'
+  ];
+
+  return gulp.src(testFiles)
+    .pipe(karma({
+      configFile: confFile,
+      action: 'run'
+    }))
+    .on('error', function (err) {
+      // Make sure failed tests cause gulp to exit non-zero 
+      throw err;
+    });
+}
+
 gulp.task('clean-build-folder', function () {
   return gulp.src('built/**/*', { read: false })
     .pipe(rimraf());
@@ -18,12 +35,12 @@ gulp.task('clean-build-folder', function () {
 gulp.task('build', function (done) {
   var tsconfig = require("./tsconfig.json");
   var filesGlob = tsconfig.filesGlob;
-   
+
   tsconfig.compilerOptions.typescript = require('typescript');
- 
+
   return gulp.src(filesGlob)
-      .pipe(ts(tsconfig.compilerOptions))
-      .pipe(gulp.dest(tsconfig.compilerOptions.outDir));
+    .pipe(ts(tsconfig.compilerOptions))
+    .pipe(gulp.dest(tsconfig.compilerOptions.outDir));
 });
 
 gulp.task('copy-api-definitions', function () {
@@ -32,9 +49,9 @@ gulp.task('copy-api-definitions', function () {
     .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('copy-definitions', ['copy-api-definitions'], function() {
-    return gulp.src('./definitions/es6-promise/**/*')
-      .pipe(gulp.dest('./dist/es6-promise'));
+gulp.task('copy-definitions', ['copy-api-definitions'], function () {
+  return gulp.src('./definitions/es6-promise/**/*')
+    .pipe(gulp.dest('./dist/es6-promise'));
 });
 
 gulp.task('package', ['build', 'copy-definitions'], function (done) {
@@ -45,7 +62,7 @@ gulp.task('package', ['build', 'copy-definitions'], function (done) {
     debug: false,
     standalone: 'syringe'
   });
-  
+
   return b
     .bundle()
     .pipe(source('syringe.js'))
@@ -59,18 +76,9 @@ gulp.task('package', ['build', 'copy-definitions'], function (done) {
 });
 
 gulp.task('unit', ['build'], function () {
-  var karma = require('gulp-karma');
-  var testFiles = [
-    'built/test/**/*.js'
-  ];
-  
-  return gulp.src(testFiles)
-      .pipe(karma({
-        configFile: 'karma.conf.js',
-        action: 'run'
-      }))
-      .on('error', function(err) {
-        // Make sure failed tests cause gulp to exit non-zero 
-        throw err;
-      });  
+  runKarmaTests('karma.conf.js');
+});
+
+gulp.task('unit.ci', ['build'], function () {
+  runKarmaTests('karma-sauce.conf.js');
 });
