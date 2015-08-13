@@ -134,6 +134,8 @@ export class Injector implements Syringe.IInjector {
   }
   
   private _reportMissingBinding(binding: Syringe.Binding.IBinding<any>): void {
-    throw new MissingBindingError();
+    let index = this._tokens.indexOf(binding.token);
+    
+    throw new MissingBindingError(index);
   }
 }

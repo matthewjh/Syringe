@@ -12,5 +12,13 @@ export class NoBoundTokenError extends Error {
 
 export class MissingBindingError extends Error { 
   public name = 'MissingBindingError';
-  public message = 'Injector created with missing binding. Check factory binding dependencies to ensure that they are all present within the injector hierachy';
+  public bindingIndex: number;
+  public message: string;
+  
+  constructor(bindingIndex: number) {
+    super();
+    
+    this.bindingIndex = bindingIndex;
+    this.message = `Injector created with missing dependency for binding at index ${bindingIndex}. Check factory binding dependencies to ensure that they are all present within the injector hierachy`;
+  }
 }

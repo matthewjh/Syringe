@@ -96,10 +96,21 @@ describe('injector', () => {
   it('should throw when creating a root injector with a missing binding', () => {
     expect(() => {
       let injector = new Injector([
+        bind(oneToken).toValue(1),
         bind(twoToken).toFactory(three => three - 1,
                                 threeToken)              
       ]);
     }).toThrowError(MissingBindingError);
+    
+    try {
+      let injector = new Injector([
+          bind(oneToken).toValue(1),
+          bind(twoToken).toFactory(three => three - 1,
+                                  threeToken)              
+      ]);
+    } catch (error) {
+      expect(<MissingBindingError>error.bindingIndex).toBe(1);
+    }
   });
   
   it('should not throw when creating a sole injector with a missing binding when shouldDetectMissingBindings is false', () => {
