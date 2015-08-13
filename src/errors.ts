@@ -19,6 +19,6 @@ export class MissingBindingError extends Error {
     super();
     
     this.bindingIndex = bindingIndex;
-    this.message = `Injector created with missing dependency for binding at index ${bindingIndex}. Check factory binding dependencies to ensure that they are all present within the injector hierachy`;
+    this.message = `Injector created with missing dependency for binding at index ${bindingIndex} of passed bindings array. Check the binding at this index an ensure that it's dependencies are bound within the injector hierachy`;
   }
 }
