@@ -1,5 +1,7 @@
 # Syringe
 
+![Travis CI build status](https://api.travis-ci.org/matthewjh/Syringe.png)
+
 Syringe is a dependency injection library for TypeScript, with a binding syntax inspired by Angular 2's DI system. Unlike other DI libraries, it has a lot of built-in type-safety. It's also fundamentally asynchronous, making handling asynchronous dependencies painless.
 
 ##Table of Contents
