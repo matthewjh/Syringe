@@ -4,7 +4,11 @@
 import 'es6-promise';
 import {IndexedProvider} from './provider/facade';
 import {bind} from './binding';
-import {CyclicDependencyError, NoBoundTokenError} from './errors';
+import {CyclicDependencyError, NoBoundTokenError, MissingBindingError} from './errors';
+
+const DEFAULT_OPTIONS: Syringe.IInjectorOptions = {
+  shouldDetectMissingBindings: true
+};
 
 interface IIndexLog extends Array<boolean> {
   [index: number]: (boolean | typeof undefined);
@@ -18,13 +22,19 @@ export class Injector implements Syringe.IInjector {
   private _tokens: Syringe.IToken<any>[];
   private _providers: IndexedProvider<any>[];
   private _parent: Syringe.IInjector;
+  private _isRoot: boolean;
   private _cache: ICache;
+  private _options: Syringe.IInjectorOptions;
   
-  constructor(bindings: Syringe.Binding.IBinding<any>[], parent?: Syringe.IInjector) {
+  constructor(bindings: Syringe.Binding.IBinding<any>[], 
+              parent?: Syringe.IInjector, 
+              options: Syringe.IInjectorOptions = DEFAULT_OPTIONS) {
     this._tokens = [];
     this._providers = [];
     this._cache = [];
     this._parent = parent;
+    this._isRoot = !parent;
+    this._options = options;
    
     this._ingestBindings(
       bindings, 
@@ -92,10 +102,20 @@ export class Injector implements Syringe.IInjector {
   
   private _ingestBindings(...bindings: Syringe.Binding.IBinding<any>[][]): void {
     let allBindings = [].concat(...bindings);
+    let getIndexForToken = (binding: Syringe.Binding.IBinding<any>, token: Syringe.IToken<any>) => {
+      let index = this._getIndexForToken(token);
+      
+      // If a token isn't on the root injector, we have a problem.
+      if (this._options.shouldDetectMissingBindings && this._isRoot && index === -1) {
+        this._reportMissingBinding(binding);
+      }
+      
+      return index;
+    }
      
     this._tokens = allBindings.map(b => b.token);
     this._providers = allBindings.map(b => {
-      return new IndexedProvider(b.provider, token => this._getIndexForToken(token))
+      return new IndexedProvider(b.provider, getIndexForToken.bind(this, b));
     });
   }
   
@@ -111,5 +131,9 @@ export class Injector implements Syringe.IInjector {
     if (indexLog[index]) {
       throw new CyclicDependencyError();
     }
+  }
+  
+  private _reportMissingBinding(binding: Syringe.Binding.IBinding<any>): void {
+    throw new MissingBindingError();
   }
 }

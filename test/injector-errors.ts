@@ -3,9 +3,9 @@
 
 import 'es6-promise';
 import {Injector, Token, bind} from '../src/index';
-import {CyclicDependencyError, NoBoundTokenError} from '../src/errors';
+import {CyclicDependencyError, NoBoundTokenError, MissingBindingError} from '../src/errors';
 
-describe('injector with missing bindings', () => {
+describe('injector', () => {
   let oneToken = new Token<number>();
   let twoToken = new Token<number>();
   let threeToken = new Token<number>();
@@ -16,7 +16,9 @@ describe('injector with missing bindings', () => {
       bind(oneToken).toFactory(() => 1)                         
     ];
     
-    injector = new Injector(bindings);
+    injector = new Injector(bindings, null, {
+      shouldDetectMissingBindings: false
+    });
     
     injector.get(twoToken).catch((error) => {
       expect(error).toEqual(jasmine.any(NoBoundTokenError));
@@ -87,5 +89,25 @@ describe('injector with missing bindings', () => {
       expect(two).toBe(2);
       done()
     });
+  });
+  
+  it('should throw when creating a sole injector with a missing binding', () => {
+    expect(() => {
+      let injector = new Injector([
+        bind(twoToken).toFactory(three => three - 1,
+                                threeToken)              
+      ]);
+    }).toThrowError(MissingBindingError);
+  });
+  
+  it('should not throw when creating a sole injector with a missing binding when shouldDetectMissingBindings is false', () => {
+    expect(() => {
+      let injector = new Injector([
+        bind(twoToken).toFactory(three => three - 1,
+                                threeToken)              
+      ], null, {
+        shouldDetectMissingBindings: false
+      });
+    }).not.toThrowError(MissingBindingError);
   });
 });
