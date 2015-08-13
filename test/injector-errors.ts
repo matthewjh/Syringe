@@ -34,7 +34,9 @@ describe('injector', () => {
                                   twoToken)                         
     ];
     
-    injector = new Injector(bindings);
+    injector = new Injector(bindings, null, {
+      shouldDetectMissingBindings: false
+    });
     
     injector.get(threeToken).catch((error) => {
       expect(error).toEqual(jasmine.any(NoBoundTokenError));
@@ -91,7 +93,7 @@ describe('injector', () => {
     });
   });
   
-  it('should throw when creating a sole injector with a missing binding', () => {
+  it('should throw when creating a root injector with a missing binding', () => {
     expect(() => {
       let injector = new Injector([
         bind(twoToken).toFactory(three => three - 1,
