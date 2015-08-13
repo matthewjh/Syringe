@@ -57,11 +57,9 @@ gulp.task('copy-definitions', ['copy-api-definitions'], function () {
 gulp.task('package', ['build', 'copy-definitions'], function (done) {
   var outFolder = './dist';
   var browserify = require('browserify');
-  var b = browserify({
-    entries: 'built/src/index.js',
-    debug: false,
-    standalone: 'syringe'
-  });
+  var config = require('./browserify.conf.js');
+  
+  var b = browserify(config);
 
   return b
     .bundle()
