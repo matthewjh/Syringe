@@ -106,7 +106,7 @@ export class Injector implements Syringe.IInjector {
       let index = this._getIndexForToken(token);
       
       // If a token isn't on the root injector, we have a problem.
-      if (this._options.shouldDetectMissingBindings && this._isRoot && index === -1) {
+      if (index === -1 && this._isRoot && this._options.shouldDetectMissingBindings) {
         this._reportMissingBinding(binding);
       }
       
