@@ -1,53 +1,60 @@
-// /// <reference path="../definitions/definitions.d.ts"/>
-// /// <reference path="../definitions/api.d.ts"/>
+/// <reference path="../definitions/definitions.d.ts"/>
+/// <reference path="../definitions/api.d.ts"/>
 
-// import 'es6-promise';
-// import {Injector, Inject, Token, bind} from '../src/index';
+import 'es6-promise';
+import {Injector, Inject, Token, Lazy, bind} from '../src/index';
 
-// let OneToken = new Token<number>();
-// let TwoToken = new Token<number>();
-// let ThreeToken = new Token<number>();
-// let classToken = new Token<ClassWithLazyDependency>();
-
-// @Inject(OneToken.asLazy)
-// class ClassWithLazyDependency {
-//   constructor(private _one: Syringe.ILazy<number>) {}
+class OneToken extends Token<number> {}
+class TwoToken extends Token<number> {}
+class ThreeToken extends Token<number> {}
+class ClassToken extends Token<ClassWithLazyDependency> {}
+ 
+@Inject(Lazy(OneToken), Lazy(TwoToken))
+class ClassWithLazyDependency {
+  constructor(private _one: Syringe.ILazy<number>,
+              private _two: Syringe.ILazy<number>) {}
   
-//   get one(): Promise<number> {
-//     return this._one.get();
-//   }
-// }
+  get three(): Promise<number> {
+    return Promise.all([
+      this._one.get(),
+      this._two.get()
+    ]).then(([one, two]) => one + two);
+  }
+}
 
-// describe('injector with lazy dependencies', () => {
-//   it('should correctly handle lazy dependencies', (done) => {
-//     let oneFactoryCallCount = 0;
-//     let bindings = [
-//       bind(OneToken).toFactory(() => {
-//         oneFactoryCallCount++;
-//         return 1;
-//       }),
-//       bind(classToken).toClass(ClassWithLazyDependency)
-//     ];
+describe('injector with lazy dependencies', () => {
+  it('should correctly handle lazy dependencies', (done) => {
+    let oneFactoryCallCount = 0;
+    let bindings = [
+      bind(OneToken).toFactory(() => {
+        oneFactoryCallCount++;
+        return 1;
+      }),
+      bind(TwoToken).toValue(2),
+      bind(ClassToken).toClass(ClassWithLazyDependency)
+    ];
     
-//     let injector = new Injector(bindings);
+    let injector = new Injector(bindings);
     
-//     injector.get(classToken).then(clazz => {
-//       expect(oneFactoryCallCount).toBe(0);
+    injector.get(ClassToken).then(clazz => {
+      expect(oneFactoryCallCount).toBe(0);
       
-//       return clazz.one;
-//     }).then((oneValue) => {
-//       expect(oneFactoryCallCount).toBe(1);
-//       expect(oneValue).toBe(1);
+      return clazz.three;
+    }).then((threeValue) => {
+      expect(oneFactoryCallCount).toBe(1);
+      expect(threeValue).toBe(3);
       
-//       return injector.get(classToken)
-//     }).then(clazz => {
-//       return clazz.one;
-//     }).then((oneValue) => {
-//       // Check that the factory has still been called only once
-//       expect(oneFactoryCallCount).toBe(1);
-//       expect(oneValue).toBe(1);
+      return injector.get(ClassToken)
+    }).then(clazz => {
+      return clazz.three;
+    }).then((threeValue) => {
+      // Check that the factory has still been called only once
+      expect(oneFactoryCallCount).toBe(1);
+      expect(threeValue).toBe(3);
       
-//       done();
-//     });
-//   });
-// });
+      done();
+    }).catch(e => {
+      console.error(e);
+    });
+  });
+});

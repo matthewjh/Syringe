@@ -4,6 +4,7 @@
 import 'es6-promise';
 import {IndexedProvider} from './provider/facade';
 import {bind} from './binding';
+import {Lazy} from './token';
 import {CyclicDependencyError, NoBoundTokenError} from './errors';
 
 interface IIndexLog extends Array<boolean> {
@@ -100,12 +101,11 @@ export class Injector implements Syringe.IInjector {
   }
   
   private _getLazyBindings(bindings: Syringe.Binding.IBinding<any>[]): Syringe.Binding.IBinding<any>[] {
-    // return bindings.map(b => bind(b.token.asLazy).toValue({
-    //   get: () => {
-    //     return this.get(b.token);
-    //   }
-    // }));
-    return [];
+    return bindings.map(b => bind(Lazy(b.token)).toValue({
+      get: () => {
+        return this.get(b.token);
+      }
+    }));
   }
   
   private _detectCycle(index: number, indexLog: IIndexLog): void {

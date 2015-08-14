@@ -95,6 +95,7 @@ declare module Syringe {
   function Inject<T1, T2, T3, T4, T5, T6, T7>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>, token7: IToken<T7>): Decorators.IInjectDecorator<T1, T2, T3, T4, T5, T6, T7, {}>;
   function Inject<T1, T2, T3, T4, T5, T6, T7, T8>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>, token7: IToken<T7>, token8: IToken<T8>): Decorators.IInjectDecorator<T1, T2, T3, T4, T5, T6, T7, T8>;
   
+  function Lazy<T>(token: IToken<T>): IToken<ILazy<T>>;
   
   var Injector: IInjectorStatic;
   
