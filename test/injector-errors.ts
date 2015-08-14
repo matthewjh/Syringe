@@ -3,9 +3,9 @@
 
 import 'es6-promise';
 import {Injector, Token, bind} from '../src/index';
-import {CyclicDependencyError, NoBoundTokenError} from '../src/errors';
+import {CyclicDependencyError, NoBoundTokenError, MissingBindingError} from '../src/errors';
 
-describe('injector with missing bindings', () => {
+describe('injector', () => {
   let oneToken = new Token<number>();
   let twoToken = new Token<number>();
   let threeToken = new Token<number>();
@@ -16,7 +16,9 @@ describe('injector with missing bindings', () => {
       bind(oneToken).toFactory(() => 1)                         
     ];
     
-    injector = new Injector(bindings);
+    injector = new Injector(bindings, null, {
+      shouldDetectMissingBindings: false
+    });
     
     injector.get(twoToken).catch((error) => {
       expect(error).toEqual(jasmine.any(NoBoundTokenError));
@@ -32,7 +34,9 @@ describe('injector with missing bindings', () => {
                                   twoToken)                         
     ];
     
-    injector = new Injector(bindings);
+    injector = new Injector(bindings, null, {
+      shouldDetectMissingBindings: false
+    });
     
     injector.get(threeToken).catch((error) => {
       expect(error).toEqual(jasmine.any(NoBoundTokenError));
@@ -87,5 +91,56 @@ describe('injector with missing bindings', () => {
       expect(two).toBe(2);
       done()
     });
+  });
+  
+  it('should throw when creating a root injector with a missing binding', () => {
+    function create() {
+      new Injector([
+        bind(oneToken).toValue(1),
+        bind(twoToken).toFactory(three => three - 1,
+                                threeToken)              
+      ]);
+    }
+    
+    expect(() => create()).toThrowError(MissingBindingError);
+    
+    try {
+      create();
+    } catch (error) {
+      expect(<MissingBindingError>error.bindingIndex).toBe(1);
+    }
+  });
+  
+  it('should throw when creating a child injector with a missing binding', () => {
+    function create() {
+      let parentInjector = new Injector([
+        bind(threeToken).toValue(3)
+      ]);
+      
+      new Injector([
+        bind(twoToken).toFactory((three, one) => three - one,
+                                threeToken, oneToken)              
+      ], parentInjector);
+    }
+    
+    expect(() => create()).toThrowError(MissingBindingError);
+    
+    try {
+      create();
+    } catch (error) {
+      expect(<MissingBindingError>error.bindingIndex).toBe(0);
+    }
+  });
+  
+  
+  it('should not throw when creating a sole injector with a missing binding when shouldDetectMissingBindings is false', () => {
+    expect(() => {
+      let injector = new Injector([
+        bind(twoToken).toFactory(three => three - 1,
+                                threeToken)              
+      ], null, {
+        shouldDetectMissingBindings: false
+      });
+    }).not.toThrowError(MissingBindingError);
   });
 });
