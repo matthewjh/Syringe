@@ -33,7 +33,7 @@ class UnprovidedBinding<T> implements Syringe.Binding.IUnprovidedBinding<T> {
   }
   
   toClass<T1, T2, T3, T4, T5, T6, T7, T8>(Class: Syringe.IStaticWithArgs<T, T1, T2, T3, T4, T5, T6, T7, T8>, ...dependencyTokens: Syringe.IToken<any>[]): Syringe.Binding.IBinding<T> {
-    return new Binding(this._token, new ClassProvider(Class, dependencyTokens));
+    return new Binding<T>(this._token, new ClassProvider(Class, dependencyTokens));
   }
 }
 

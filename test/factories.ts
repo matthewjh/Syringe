@@ -4,31 +4,31 @@
 import 'es6-promise';
 import {Injector, Token, bind} from '../src/index';
 
-describe('injector with factory bindings', () => {
-  let oneToken = new Token<number>();
-  let twoToken = new Token<number>();
-  let threeToken = new Token<number>();
-  let concatenedNumbersToken = new Token<string>();
-  
+class OneToken extends Token<number> {}
+class TwoToken extends Token<number> {}
+class ThreeToken extends Token<number> {}
+class ConcatenatedNumbersToken extends Token<string> {}
+
+describe('injector with factory bindings', () => {  
   it('should correctly resolve values from tokens via sync factories', (done) => {
     let injector: Syringe.IInjector;
     let bindings = [
-      bind(oneToken).toFactory(() => 1),
-      bind(twoToken).toFactory((one) => one + 1,
-                               oneToken),
-      bind(threeToken).toFactory((one, two) => one + two,
-                                oneToken, twoToken),
-      bind(concatenedNumbersToken).toFactory((one, two, three) => `${one}${two}${three}`,
-                                              oneToken, twoToken, threeToken),                         
+      bind(OneToken).toFactory(() => 1),
+      bind(TwoToken).toFactory((one) => one + 1,
+                               OneToken),
+      bind(ThreeToken).toFactory((one, two) => one + two,
+                                OneToken, TwoToken),
+      bind(ConcatenatedNumbersToken).toFactory((one, two, three) => `${one}${two}${three}`,
+                                              OneToken, TwoToken, ThreeToken),                         
     ];
     
     injector = new Injector(bindings);
     
     Promise.all(<Promise<any>[]>[
-      injector.get(oneToken),
-      injector.get(twoToken),
-      injector.get(threeToken),
-      injector.get(concatenedNumbersToken)
+      injector.get(OneToken),
+      injector.get(TwoToken),
+      injector.get(ThreeToken),
+      injector.get(ConcatenatedNumbersToken)
     ]).then(([oneValue, twoValue, threeValue, concatenatedNumbers]) => {
       expect(oneValue).toEqual(1);
       expect(twoValue).toEqual(2);
@@ -42,22 +42,22 @@ describe('injector with factory bindings', () => {
   it('should correctly resolve values from tokens via async factories', (done) => {
     let injector: Syringe.IInjector;
     let bindings = [
-      bind(oneToken).toAsyncFactory(() => Promise.resolve(1)),
-      bind(twoToken).toFactory((one) => one + 1,
-                               oneToken),
-      bind(threeToken).toAsyncFactory((one, two) => Promise.resolve(one + two),
-                                      oneToken, twoToken),
-      bind(concatenedNumbersToken).toFactory((one, two, three) => `${one}${two}${three}`,
-                                              oneToken, twoToken, threeToken),                         
+      bind(OneToken).toAsyncFactory(() => Promise.resolve(1)),
+      bind(TwoToken).toFactory((one) => one + 1,
+                               OneToken),
+      bind(ThreeToken).toAsyncFactory((one, two) => Promise.resolve(one + two),
+                                      OneToken, TwoToken),
+      bind(ConcatenatedNumbersToken).toFactory((one, two, three) => `${one}${two}${three}`,
+                                              OneToken, TwoToken, ThreeToken),                         
     ];
     
     injector = new Injector(bindings);
     
     Promise.all(<Promise<any>[]>[
-      injector.get(oneToken),
-      injector.get(twoToken),
-      injector.get(threeToken),
-      injector.get(concatenedNumbersToken)
+      injector.get(OneToken),
+      injector.get(TwoToken),
+      injector.get(ThreeToken),
+      injector.get(ConcatenatedNumbersToken)
     ]).then(([oneValue, twoValue, threeValue, concatenatedNumbers]) => {
       expect(oneValue).toEqual(1);
       expect(twoValue).toEqual(2);
@@ -72,14 +72,14 @@ describe('injector with factory bindings', () => {
     let injector: Syringe.IInjector;
     let error = new Error();
     let bindings = [
-      bind(oneToken).toAsyncFactory(() => Promise.reject(error)),
-      bind(twoToken).toFactory((one) => one + 1,
-                               oneToken)                   
+      bind(OneToken).toAsyncFactory(() => Promise.reject(error)),
+      bind(TwoToken).toFactory((one) => one + 1,
+                               OneToken)                   
     ];
     
     injector = new Injector(bindings);
     
-    injector.get(twoToken).catch(actualError => {
+    injector.get(TwoToken).catch(actualError => {
       expect(actualError).toBe(error);
       done();
     });
@@ -88,16 +88,16 @@ describe('injector with factory bindings', () => {
   it('should only call a given factory once', (done) => {
     let callCount = 0;
     let injector = new Injector([
-      bind(oneToken).toFactory(() => {
+      bind(OneToken).toFactory(() => {
         callCount++;
         return 1;
       })
     ]);
     
     Promise.all([
-      injector.get(oneToken),
-      injector.get(oneToken),
-      injector.get(oneToken)
+      injector.get(OneToken),
+      injector.get(OneToken),
+      injector.get(OneToken)
     ]).then(() => {
       expect(callCount).toBe(1);
       done();

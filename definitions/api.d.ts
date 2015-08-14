@@ -67,12 +67,8 @@ declare module Syringe {
     ___tokens?: IToken<any>[];
   }
 
-  interface IToken<T> { 
-    asLazy: IToken<ILazy<T>>;  
-  }
-  
-  interface ITokenStatic {
-    new<T>(): IToken<T>;
+  interface IToken<T> {
+    new(): Token<T>;
   }
   
   interface ILazy<T> {
@@ -101,7 +97,11 @@ declare module Syringe {
   
   
   var Injector: IInjectorStatic;
-  var Token: ITokenStatic;
+  
+  class Token<T> {
+    // Unfortunately we need this for TS to infer `T` in some contexts
+    surrogate: T;
+  }
 }
 
 declare module 'syringe.ts' {

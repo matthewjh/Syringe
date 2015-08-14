@@ -4,24 +4,24 @@
 import 'es6-promise';
 import {Injector, Token, bind} from '../src/index';
 
+class OneToken extends Token<number> {}
+class TwoToken extends Token<number> {}
+class ThreeToken extends Token<number> {}
+
 describe('injector with missing bindings', () => {
-  let oneToken = new Token<number>();
-  let twoToken = new Token<number>();
-  let threeToken = new Token<number>();
-  
   it('should resolve token from parent injector when it\'s not on the child', (done) => {
    let parentInjector = new Injector([
-     bind(oneToken).toValue(1)
+     bind(OneToken).toValue(1)
    ]);
    
    let childInjector = new Injector([
-     bind(twoToken).toFactory(one => one + 1,
-                              oneToken)
+     bind(TwoToken).toFactory(one => one + 1,
+                              OneToken)
    ], parentInjector);
    
    Promise.all([
-     childInjector.get(oneToken),
-     childInjector.get(twoToken)
+     childInjector.get(OneToken),
+     childInjector.get(TwoToken)
    ]).then(([one, two]) => {
      expect(one).toBe(1);
      expect(two).toBe(2);
@@ -32,14 +32,14 @@ describe('injector with missing bindings', () => {
   
   it('should resolve token from the child injector if it\'s on both the child and the parent', (done) => {
     let parentInjector = new Injector([
-      bind(oneToken).toValue(2)
+      bind(OneToken).toValue(2)
     ]);
     
     let childInjector = new Injector([
-     bind(oneToken).toValue(1)
+     bind(OneToken).toValue(1)
     ], parentInjector);
     
-    childInjector.get(oneToken).then(one => {
+    childInjector.get(OneToken).then(one => {
       expect(one).toBe(1);
       
       done();

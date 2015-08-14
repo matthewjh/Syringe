@@ -100,11 +100,12 @@ export class Injector implements Syringe.IInjector {
   }
   
   private _getLazyBindings(bindings: Syringe.Binding.IBinding<any>[]): Syringe.Binding.IBinding<any>[] {
-    return bindings.map(b => bind(b.token.asLazy).toValue({
-      get: () => {
-        return this.get(b.token);
-      }
-    }));
+    // return bindings.map(b => bind(b.token.asLazy).toValue({
+    //   get: () => {
+    //     return this.get(b.token);
+    //   }
+    // }));
+    return [];
   }
   
   private _detectCycle(index: number, indexLog: IIndexLog): void {

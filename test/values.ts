@@ -4,25 +4,25 @@
 import 'es6-promise';
 import {Injector, Token, bind} from '../src/index';
 
-describe('injector with value bindings', () => {
-  let oneToken = new Token<number>();
-  let twoToken = new Token<number>();
-  let threeToken = new Token<number>();
-  
+class OneToken extends Token<number> {}
+class TwoToken extends Token<number> {}
+class ThreeToken extends Token<number> {}
+
+describe('injector with value bindings', () => {  
   it('should correctly resolve values from tokens', (done) => {
     let injector: Syringe.IInjector;
     let bindings = [
-      bind(oneToken).toValue(1),
-      bind(twoToken).toValue(2),
-      bind(threeToken).toValue(3)
+      bind(OneToken).toValue(1),
+      bind(TwoToken).toValue(2),
+      bind(ThreeToken).toValue(3)
     ];
     
     injector = new Injector(bindings);
     
     Promise.all([
-      injector.get(oneToken),
-      injector.get(twoToken),
-      injector.get(threeToken)
+      injector.get(OneToken),
+      injector.get(TwoToken),
+      injector.get(ThreeToken)
     ]).then(([oneValue, twoValue, threeValue]) => {
       expect(oneValue).toEqual(1);
       expect(twoValue).toEqual(2);
