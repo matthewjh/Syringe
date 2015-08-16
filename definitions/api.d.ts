@@ -69,6 +69,7 @@ declare module Syringe {
 
   interface IToken<T> {
     new(): Token<T>;
+    getDebugName(): string;
   }
   
   interface ILazy<T> {
@@ -102,7 +103,15 @@ declare module Syringe {
   class Token<T> {
     // Unfortunately we need this for TS to infer `T` in some contexts
     surrogate: T;
+    
+    static getDebugName(): string;
   }
+}
+
+interface Function {
+  
+  // Available in ES6
+  name?: string;
 }
 
 declare module 'syringe.ts' {

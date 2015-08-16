@@ -3,6 +3,10 @@
 
 export class Token<T> {
 	surrogate: T;
+	
+	static getDebugName(): string {		
+		return this.name;
+	}
 }
 
 function createInlineToken<T>(): Syringe.IToken<T> {

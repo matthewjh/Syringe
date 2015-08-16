@@ -36,6 +36,7 @@ describe('injector with missing bindings', () => {
     
     injector.get(ThreeToken).catch((error) => {
       expect(error).toEqual(jasmine.any(NoBoundTokenError));
+      expect(error.message).toContain('TwoToken');
       done();
     });
   });
@@ -55,6 +56,12 @@ describe('injector with missing bindings', () => {
     expect(() => {
       injector.get(TwoToken);
     }).toThrowError(CyclicDependencyError);
+    
+    try {
+      injector.get(TwoToken);
+    } catch(e) {
+      expect(e.message).toContain('TwoToken -> OneToken -> TwoToken');
+    }
   });
   
   it('should not throw when there\'s a pseudo-cyclic dependency with a parent injector', done => {

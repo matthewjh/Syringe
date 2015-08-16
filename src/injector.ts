@@ -37,7 +37,7 @@ export class Injector implements Syringe.IInjector {
     let index = this._getIndexForToken(token);
     
     if (index !== -1) {
-      return this._getByIndex(index, []);
+      return this._getByIndex(index, [], []);
     } else {
       return this._getFromParent(token);
     }
@@ -47,27 +47,29 @@ export class Injector implements Syringe.IInjector {
      if (this._parent) {
         return this._parent.get(token);
       } else {
-        let error = new NoBoundTokenError();
+        let error = new NoBoundTokenError(token);
         
         return Promise.reject(error); 
       }
   }
   
-  private _getByIndex<T>(index: number, indexLog: IIndexLog): Promise<T> {
+  private _getByIndex<T>(index: number, indexLog: IIndexLog, tokenChain: Syringe.IToken<any>[]): Promise<T> {
     let promise = this._cache[index];
     
     if (!promise) {
-      promise = this._getByIndexLookup(index, indexLog);
+      promise = this._getByIndexLookup(index, indexLog, tokenChain);
       this._cache[index] = promise;
     }
     
     return promise;
   }
   
-  private _getByIndexLookup<T>(index: number, indexLog: IIndexLog): Promise<T> {
+  private _getByIndexLookup<T>(index: number, indexLog: IIndexLog, tokenChain: Syringe.IToken<any>[]): Promise<T> {
+    let token = this._tokens[index];
     let provider = this._providers[index];
 
-    this._detectCycle(index, indexLog);
+    tokenChain.push(token);
+    this._detectCycle(index, indexLog, tokenChain);
     indexLog[index] = true;
    
     let dependencyPromises = provider.dependencyIndices.map((depIndex, i) => {
@@ -77,8 +79,9 @@ export class Injector implements Syringe.IInjector {
         return this._getFromParent(token);
       } else {
         let clonedIndexLog = indexLog.slice();
+        let clonedTokenChain = tokenChain.slice();
         
-        return this._getByIndex(depIndex, clonedIndexLog);
+        return this._getByIndex(depIndex, clonedIndexLog, tokenChain);
       }
     });
     
@@ -108,9 +111,9 @@ export class Injector implements Syringe.IInjector {
     }));
   }
   
-  private _detectCycle(index: number, indexLog: IIndexLog): void {
+  private _detectCycle(index: number, indexLog: IIndexLog, tokenChain: Syringe.IToken<any>[]): void {
     if (indexLog[index]) {
-      throw new CyclicDependencyError();
+      throw new CyclicDependencyError(tokenChain);
     }
   }
 }
