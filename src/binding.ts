@@ -1,5 +1,5 @@
 /// <reference path="../definitions/definitions.d.ts"/>
-/// <reference path="../definitions/api.d.ts"/>
+/// <reference path="./syringe.d.ts"/>
 
 import {ValueProvider, FactoryProvider, AsyncFactoryProvider, ClassProvider} from './provider/facade';
 

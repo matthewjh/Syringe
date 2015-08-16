@@ -1,8 +1,9 @@
 /// <reference path="../definitions/definitions.d.ts"/>
 /// <reference path="../definitions/api.d.ts"/>
+/// <reference path="../src/syringe.d.ts"/>
 
-import 'es6-promise';
-import {Injector, Token, Inject, bind} from '../src/index';
+import 'es6-promise'; 
+import {Injector, Token, Inject, bind} from 'syringe.ts/index';
 
 class AToken extends Token<A> {}
 class BToken extends Token<B> {}

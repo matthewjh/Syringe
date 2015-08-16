@@ -1,5 +1,7 @@
 /// <reference path="../definitions/definitions.d.ts"/>
-/// <reference path="../definitions/api.d.ts"/>
+/// <reference path="./syringe.d.ts"/>
+
+import {IToken} from 'syringe.ts/token';
 
 // For envs that lack Function#name
 const FALLBACK_TOKEN_DEBUG_NAME = 'Token';
@@ -15,12 +17,12 @@ export class Token<T> {
 		return this.name || FALLBACK_TOKEN_DEBUG_NAME;
 	}
 	
-	static create<T>(debugName = FALLBACK_TOKEN_DEBUG_NAME): Syringe.IToken<T> {
+	static create<T>(debugName = FALLBACK_TOKEN_DEBUG_NAME): IToken<T> {
 		return createInlineToken<T>(debugName);
 	}
 }
 
-function createInlineToken<T>(debugName): Syringe.IToken<T> {
+function createInlineToken<T>(debugName): IToken<T> {
 	// Until TypeScript allows class expressions
 	
 	function InlineToken() {
@@ -33,7 +35,7 @@ function createInlineToken<T>(debugName): Syringe.IToken<T> {
 	return <any>InlineToken;
 }
 
-export function Lazy<T>(token: Syringe.IToken<T>): Syringe.IToken<Syringe.ILazy<T>> {
+export function Lazy<T>(token: IToken<T>): IToken<Syringe.ILazy<T>> {
 	if (!token['___lazyToken']) {
 		token['___lazyToken'] = Token.create<Syringe.ILazy<T>>(`Lazy(${token.getDebugName()})`);
 	}
