@@ -53,7 +53,7 @@ injector.get(TwoToken).then(two => {
  
 ## Type-safe? How so?
 
-In the example above, TypeScript knows that `injector.get(twoToken)` returns a `Promise<number>`, because the type of the dependency represented by `twoToken` is known to be `number`. 
+In the example above, TypeScript knows that `injector.get(TwoToken)` returns a `Promise<number>`, because the type of the dependency represented by `TwoToken` is known to be `number`. 
 
 Similarly, if you try to take a string and bind it to `oneValue`, TypeScript will error out. This makes Syringe far more powerful than other TS/JS DI libraries, where calling `injector.get(someTokenOrId)` returns `any`, forcing you to cast an assume that the types will be correct at runtime. It also means that when binding classes or factories, if the parameters to the class constructor or factory change from that of the binding tokens in type or arity, or vice-versa, TypeScript gives an error. 
 
@@ -119,8 +119,6 @@ interface ICar {
    name: string;
 }
 
-let carsListToken = new Token<ICar[]>();
-let carNamesToken = new Token<string>();
 class CarsListToken extends Token<ICar[]> {}
 class CarNamesToken extends Token<string> {}
 
@@ -193,7 +191,7 @@ injector.get(LogToken).then(log => {
 });
 ````
 
-You can also specify a class's dependency tokens by decorating it with `Inject`. Not  e that this requires that the decorators flag (`--experimentalDecorators`) be passed to the TypeScript compiler and that you target at least ES5 (`--target es5`):
+You can also specify a class's dependency tokens by decorating it with `Inject`. Note that this requires that the decorators flag (`--experimentalDecorators`) be passed to the TypeScript compiler and that you target at least ES5 (`--target es5`):
 
 ````typescript
 /// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
