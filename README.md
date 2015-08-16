@@ -37,16 +37,16 @@ To begin using Syringe, you need to create an `Injector`. An `Injector` has bind
 
 import {Injector, Token, bind} from 'syringe.ts';
 
-let oneToken = new Token<number>();
-let twoToken = new Token<number>();
+class OneToken extends Token<number> {}
+class TwoToken extends Token<number> {}
 
 let injector = new Injector([
-  bind(oneToken).toValue(1),
-  bind(twoToken).toFactory(one => one + one,
-                          oneToken)
+  bind(OneToken).toValue(1),
+  bind(TwoToken).toFactory(one => one + one,
+                          OneToken)
 ]);
 
-injector.get(twoToken).then(two => {
+injector.get(TwoToken).then(two => {
   expect(two).toBe(2); 
 });
 ````
@@ -68,13 +68,13 @@ The most basic type of binding simply binds a token to a value that has no depen
 
 import {Injector, Token, bind} from 'syringe.ts';
 
-let oneToken = new Token<number>();
+class OneToken extends Token<number> {}
 
 let injector = new Injector([
-  bind(oneToken).toValue(1)
+  bind(OneToken).toValue(1)
 ]);
 
-injector.get(oneToken).then(one => {
+injector.get(OneToken).then(one => {
   expect(one).toBe(1);
 });
 
@@ -89,18 +89,18 @@ This binds a token to the return value of a factory function, which can iteslf s
 
 import {Injector, Token, bind} from 'syringe.ts';
 
-let helloToken = new Token<string>();
-let worldToken = new Token<string>();
-let helloWorldToken = new Token<string>();
+class HelloToken extends Token<string> {}
+class WorldToken extends Token<string> {}
+class HelloWorldToken extends Token<string> {}
 
 let injector = new Injector([
-  bind(helloToken).toValue('hello'),
-  bind(worldToken).toValue('world'),
-  bind(helloWorldToken).toFactory((hello, world) => `${hello} ${world}!`,
-                                  helloToken, worldToken)
+  bind(HelloToken).toValue('hello'),
+  bind(WorldToken).toValue('world'),
+  bind(HelloWorldToken).toFactory((hello, world) => `${hello} ${world}!`,
+                                  HelloToken, WorldToken)
 ]);
 
-injector.get(helloWorldToken).then(helloWorld => {
+injector.get(HelloWorldToken).then(helloWorld => {
   expect(helloWorld).toEqual('hello world!');
 });
 
@@ -121,9 +121,11 @@ interface ICar {
 
 let carsListToken = new Token<ICar[]>();
 let carNamesToken = new Token<string>();
+class CarsListToken extends Token<ICar[]> {}
+class CarNamesToken extends Token<string> {}
 
 let injector = new Injector([
-  bind(carsListToken).toAsyncFactory(() => {
+  bind(CarsListToken).toAsyncFactory(() => {
     // Imagine doing an XHR or file read here to get a list of cars...
     
     return new Promise(resolve => {
@@ -136,14 +138,14 @@ let injector = new Injector([
     });
   }),
   
-  bind(carNamesToken).toFactory((carsList) => {
+  bind(CarNamesToken).toFactory((carsList) => {
     // The type of carsList is ICar[]. No need to handle promises inside of here -- which is great for testing! Syringe handles the promise.
     
     return carsList.map(car => car.name).join(', '); 
-  }, carsListToken)
+  }, CarsListToken)
 ]);
 
-injector.get(carNamesToken).then(carNames => {
+injector.get(CarNamesToken).then(carNames => {
   expect(carNamesToken).toEqual('Vauxhall Corsa, Ford Fiesta');
 });
 ````
@@ -163,8 +165,8 @@ interface ILog {
   info(message: string): void;
 }
 
-let logToken = new Token<ILog>();
-let isDevelopmentModeToken = new Token<boolean>();
+class LogToken extends Token<ILog> {}
+class IsDevelopmentModeToken extends Token<boolean> {}
   
 class MyLog implements ILog {
   private _isDevelopmentMode: boolean;
@@ -181,12 +183,12 @@ class MyLog implements ILog {
 }       
 
 let injector = new Injector([
-  bind(logToken).toClass(MyLog,
-                         isDevelopmentModeToken),
-  bind(isDevelopmentModeToken).toValue(true)
+  bind(LogToken).toClass(MyLog,
+                         IsDevelopmentModeToken),
+  bind(IsDevelopmentModeToken).toValue(true)
 ]);
 
-injector.get(logToken).then(log => {
+injector.get(LogToken).then(log => {
   log.info('Hi!');
 });
 ````
@@ -202,10 +204,10 @@ interface ILog {
   info(message: string): void;
 }
 
-let logToken = new Token<ILog>();
-let isDevelopmentModeToken = new Token<boolean>();
+class LogToken extends Token<ILog> {}
+class IsDevelopmentModeToken extends Token<boolean> {}
   
-@Inject(isDevelopmentModeToken)
+@Inject(IsDevelopmentModeToken)
 class MyLog implements ILog {
   private _isDevelopmentMode: boolean;
 
@@ -221,11 +223,11 @@ class MyLog implements ILog {
 }       
 
 let injector = new Injector([
-  bind(logToken).toClass(MyLog),
-  bind(isDevelopmentModeToken).toValue(true)
+  bind(LogToken).toClass(MyLog),
+  bind(IsDevelopmentModeToken).toValue(true)
 ]);
 
-injector.get(logToken).then(log => {
+injector.get(LogToken).then(log => {
   log.info('Hi!');
 });
 ````
@@ -241,19 +243,19 @@ You can create `Injector` hierarchies by passing in a parent `Injector` when cre
 
 import {Injector, Token, bind} from 'syringe.ts';
 
-let oneToken = new Token<number>();
-let twoToken = new Token<number>();
+class OneToken extends Token<number> {}
+class TwoToken extends Token<number> {}
 
 let parentInjector = new Injector([
-   bind(oneToken).toValue(1)
+   bind(OneToken).toValue(1)
 ]);
  
 let childInjector = new Injector([
-  bind(twoToken).toFactory(one => one + 1,
-                            oneToken)
+  bind(TwoToken).toFactory(one => one + 1,
+                            OneToken)
 ], parentInjector);
 
-injector.get(twoToken).then(two => {
+injector.get(TwoToken).then(two => {
   expect(two).toBe(2);
 });
 ````
@@ -271,10 +273,10 @@ This can sometimes be useful to avoid cyclic dependency errors, if you know that
 
 import {Injector, Inject, Token, bind} from 'syringe.ts';
 
-let aToken = new Token<A>();
-let bToken = new Token<B>();
+class AToken extends Token<A> {}
+class BToken extends Token<B> {}
 
-@Inject(bToken)
+@Inject(BToken)
 class A {
   private _b: B;
 
@@ -287,7 +289,7 @@ class A {
   }
 }
 
-@Inject(aToken)
+@Inject(AToken)
 class B {
   private _a: A;
 
@@ -301,12 +303,12 @@ class B {
 }
 
 let injector = new Injector([
-  bind(aToken).toClass(A),
-  bind(bToken).toClass(B)
+  bind(AToken).toClass(A),
+  bind(BToken).toClass(B)
 ]);
 
 // Throws CyclicDependencyError, because A depends on B and B depends on A.
-injector.get(aToken).then(a => {
+injector.get(AToken).then(a => {
   a.foo();
 });
 ```` 
@@ -318,12 +320,12 @@ Note that this means that the client code has to handle the asynchrony usually h
 ````typescript
 /// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
 
-import {Injector, Inject, Token, ILazy, bind} from 'syringe.ts';
+import {Injector, Inject, Token, Lazy, ILazy, bind} from 'syringe.ts';
 
-let aToken = new Token<A>();
-let bToken = new Token<B>();
-
-@Inject(bToken.asLazy)
+class AToken extends Token<A> {}
+class BToken extends Token<B> {}
+  
+@Inject(Lazy(BToken))
 class A {
   private _b: ILazy<B>;
 
@@ -338,7 +340,7 @@ class A {
   }
 }
 
-@Inject(aToken)
+@Inject(AToken)
 class B {
   private _a: A;
 
@@ -352,11 +354,11 @@ class B {
 }
 
 let injector = new Injector([
-  bind(aToken).toClass(A),
-  bind(bToken).toClass(B)
+  bind(AToken).toClass(A),
+  bind(BToken).toClass(B)
 ]);
 
-injector.get(aToken).then(a => {
+injector.get(AToken).then(a => {
   return a.foo();
 });
 ````
@@ -369,7 +371,7 @@ injector.get(aToken).then(a => {
 <script src="https://raw.githubusercontent.com/matthewjh/Syringe/master/dist/syringe.min.js" type="text/javascript"></script>
  
 <script type="text/javascript">
-  var oneToken = new syringe.Token();
+  var oneToken = syringe.Token.create();
   var injector = new syringe.Injector([
     syringe.bind(oneToken).toValue(5)
   ]);
