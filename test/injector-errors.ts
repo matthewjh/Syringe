@@ -2,7 +2,7 @@
 /// <reference path="../definitions/api.d.ts"/>
 
 import 'es6-promise';
-import {Injector, Token, bind} from '../src/index';
+import {Injector, Token, Lazy, bind} from '../src/index';
 import {CyclicDependencyError, NoBoundTokenError} from '../src/errors';
 import {envSupportsFunctionName} from './test-helpers'; 
 
@@ -29,8 +29,8 @@ describe('injector with missing bindings', () => {
     let injector: Syringe.IInjector;
     let bindings = [
       bind(OneToken).toFactory(() => 1),
-      bind(ThreeToken).toFactory(two => two + 1,
-                                  TwoToken)                         
+      bind(ThreeToken).toAsyncFactory(lazyTwo => lazyTwo.get().then(two => two + 1),
+                                  Lazy(TwoToken))                         
     ];
     
     injector = new Injector(bindings);
@@ -39,7 +39,7 @@ describe('injector with missing bindings', () => {
       expect(error).toEqual(jasmine.any(NoBoundTokenError));
       
       if (envSupportsFunctionName()) {
-        expect(error.message).toContain('TwoToken');
+        expect(error.message).toContain('Lazy(TwoToken)');
       }
       
       done();

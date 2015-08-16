@@ -96,21 +96,21 @@ describe('injector with class bindings', () => {
     });
   });
   
-  // it('should correctly resolve classes using token lists even when they are decorated with tokens', (done) => {
-  //   var alternativeOneToken = new Token<number>();
+  it('should correctly resolve classes using token lists even when they are decorated with tokens', (done) => {
+    let alternativeOneToken = Token.create<number>();
     
-  //   let injector = new Injector([
-  //     bind(DecoratedAToken).toClass(DecoratedA,
-  //                                   lternativeOneToken),
-  //     bind(oneToken).toValue(1),
-  //     bind(alternativeOneToken).toValue(5)
-  //   ]);
+    let injector = new Injector([
+      bind(DecoratedAToken).toClass(DecoratedA,
+                                    alternativeOneToken),
+      bind(OneToken).toValue(1),
+      bind(alternativeOneToken).toValue(5)
+    ]);
     
-  //   injector.get(decoratedAToken).then(decoratedA => {
-  //     expect(decoratedA.one).toBe(5);
-  //     done();
-  //   });
-  // });
+    injector.get(DecoratedAToken).then(decoratedA => {
+      expect(decoratedA.one).toBe(5);
+      done();
+    });
+  });
   
   it('should only construct a given class once', (done) => {
     let injector = new Injector([

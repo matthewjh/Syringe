@@ -105,6 +105,7 @@ declare module Syringe {
     surrogate: T;
     
     static getDebugName(): string;
+    static create<T>(debugName?: string): Syringe.IToken<T>;
   }
 }
 
