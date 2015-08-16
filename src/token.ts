@@ -1,11 +1,14 @@
 /// <reference path="../definitions/definitions.d.ts"/>
 /// <reference path="../definitions/api.d.ts"/>
 
+// For envs that lack Function#name
+const FALLBACK_TOKEN_DEBUG_NAME = 'Token';
+
 export class Token<T> {
 	surrogate: T;
 	
 	static getDebugName(): string {		
-		return this.name;
+		return this.name || FALLBACK_TOKEN_DEBUG_NAME;
 	}
 }
 
