@@ -5,7 +5,8 @@
     "rootDir": ".",
     "outDir": "built",
     "noEmitOnError": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "declaration": true
   },
   "filesGlob": [
     "src/**/*.ts",

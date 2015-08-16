@@ -1,8 +1,8 @@
 /// <reference path="../definitions/definitions.d.ts"/>
-/// <reference path="../definitions/api.d.ts"/>
+/// <reference path="../src/syringe.d.ts"/>
 
 import 'es6-promise';
-import {Injector, Token, bind} from '../src/index';
+import {Injector, Token, Inject, bind} from 'syringe.ts/index';
 
 class OneToken extends Token<number> {}
 class TwoToken extends Token<number> {}
@@ -11,7 +11,6 @@ class ConcatenatedNumbersToken extends Token<string> {}
 
 describe('injector with factory bindings', () => {  
   it('should correctly resolve values from tokens via sync factories', (done) => {
-    let injector: Syringe.IInjector;
     let bindings = [
       bind(OneToken).toFactory(() => 1),
       bind(TwoToken).toFactory((one) => one + 1,
@@ -22,7 +21,7 @@ describe('injector with factory bindings', () => {
                                               OneToken, TwoToken, ThreeToken),                         
     ];
     
-    injector = new Injector(bindings);
+    let injector = new Injector(bindings);
     
     Promise.all(<Promise<any>[]>[
       injector.get(OneToken),
@@ -40,7 +39,6 @@ describe('injector with factory bindings', () => {
   });
   
   it('should correctly resolve values from tokens via async factories', (done) => {
-    let injector: Syringe.IInjector;
     let bindings = [
       bind(OneToken).toAsyncFactory(() => Promise.resolve(1)),
       bind(TwoToken).toFactory((one) => one + 1,
@@ -51,7 +49,7 @@ describe('injector with factory bindings', () => {
                                               OneToken, TwoToken, ThreeToken),                         
     ];
     
-    injector = new Injector(bindings);
+    let injector = new Injector(bindings);
     
     Promise.all(<Promise<any>[]>[
       injector.get(OneToken),
@@ -69,7 +67,6 @@ describe('injector with factory bindings', () => {
   });
   
   it('should propagate async dependency promise rejection', (done) => {
-    let injector: Syringe.IInjector;
     let error = new Error();
     let bindings = [
       bind(OneToken).toAsyncFactory(() => Promise.reject(error)),
@@ -77,7 +74,7 @@ describe('injector with factory bindings', () => {
                                OneToken)                   
     ];
     
-    injector = new Injector(bindings);
+    let injector = new Injector(bindings);
     
     injector.get(TwoToken).catch(actualError => {
       expect(actualError).toBe(error);

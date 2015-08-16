@@ -1,13 +1,16 @@
 /// <reference path="../../definitions/definitions.d.ts"/>
-/// <reference path="../../definitions/api.d.ts"/>
+/// <reference path="../syringe.d.ts"/>
 
-export class IndexedProvider<T> implements Syringe.Provider.IProvider<T> {
-  public dependencyTokens: Syringe.IToken<any>[];
+import {IToken} from 'syringe.ts/token';
+import {IProvider} from 'syringe.ts/provider/abstract';
+
+export class IndexedProvider<T> implements IProvider<T> {
+  public dependencyTokens: IToken<any>[];
   public dependencyIndices: number[];
   
-  private _provider: Syringe.Provider.IProvider<T>; 
+  private _provider: IProvider<T>; 
   
-  constructor(provider: Syringe.Provider.IProvider<T>, getIndexForToken: (token: Syringe.IToken<any>) => number) {
+  constructor(provider: IProvider<T>, getIndexForToken: (token: IToken<any>) => number) {
     this._provider = provider;
     this.dependencyTokens = provider.dependencyTokens;
     this.dependencyIndices = provider.dependencyTokens.map(token => getIndexForToken(token));

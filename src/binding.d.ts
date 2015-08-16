@@ -2,12 +2,13 @@
 
 declare module 'syringe.ts/binding' {
     import {IToken} from 'syringe.ts/token';
+    import {IProvider} from 'syringe.ts/provider/facade';
       
     export function bind<T>(token: IToken<T>): IUnprovidedBinding<T>;	
 	
     export interface IBinding<T> { 
       token: IToken<T>;
-      provider: Syringe.Provider.IProvider<T>
+      provider: IProvider<T>
     } 
     
     export interface IUnprovidedBinding<T> {

@@ -1,14 +1,18 @@
 /// <reference path="../../definitions/definitions.d.ts"/>
-/// <reference path="../../definitions/api.d.ts"/>
+/// <reference path="../syringe.d.ts"/>
 
 import 'es6-promise';
 
-export class ClassProvider<T> implements Syringe.Provider.IProvider<T> {
-  public dependencyTokens: Syringe.IToken<any>[];
+import {IToken} from 'syringe.ts/token';
+import {IProvider} from 'syringe.ts/provider/abstract';
+import {IStaticThatMaybeHasTokens} from 'syringe.ts/decorators';
+
+export class ClassProvider<T> implements IProvider<T> {
+  public dependencyTokens: IToken<any>[];
   
   private _Class: Syringe.IStatic<T>;
   
-  constructor(Class: Syringe.IStaticThatMaybeHasTokens<any, any, any, any, any, any, any, any, any>, dependencyTokens: Syringe.IToken<any>[]) {
+  constructor(Class: IStaticThatMaybeHasTokens<any, any, any, any, any, any, any, any, any>, dependencyTokens: IToken<any>[]) {
     this.dependencyTokens = dependencyTokens;
     
     if (Class.___tokens) {

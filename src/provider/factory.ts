@@ -1,14 +1,17 @@
 /// <reference path="../../definitions/definitions.d.ts"/>
-/// <reference path="../../definitions/api.d.ts"/>
+/// <reference path="../syringe.d.ts"/>
 
 import 'es6-promise';
 
-export class FactoryProvider<T> implements Syringe.Provider.IProvider<T> {
-  public dependencyTokens: Syringe.IToken<any>[];
+import {IToken} from 'syringe.ts/token';
+import {IProvider} from 'syringe.ts/provider/abstract'
+
+export class FactoryProvider<T> implements IProvider<T> {
+  public dependencyTokens: IToken<any>[];
   
   private _factory: (...deps: any[]) => T; 
   
-  constructor(factory: (...deps: any[]) => T, dependencyTokens: Syringe.IToken<any>[]) {
+  constructor(factory: (...deps: any[]) => T, dependencyTokens: IToken<any>[]) {
     this.dependencyTokens = dependencyTokens;
     this._factory = factory;
   }
@@ -20,12 +23,12 @@ export class FactoryProvider<T> implements Syringe.Provider.IProvider<T> {
   }
 }
 
-export class AsyncFactoryProvider<T> implements Syringe.Provider.IProvider<T> {
-  public dependencyTokens: Syringe.IToken<any>[];
+export class AsyncFactoryProvider<T> implements IProvider<T> {
+  public dependencyTokens: IToken<any>[];
   
   private _factory: (...deps: any[]) => Thenable<T>; 
   
-  constructor(factory: (...deps: any[]) => Thenable<T>, dependencyTokens: Syringe.IToken<any>[]) {
+  constructor(factory: (...deps: any[]) => Thenable<T>, dependencyTokens: IToken<any>[]) {
     this.dependencyTokens = dependencyTokens;
     this._factory = factory;
   }
