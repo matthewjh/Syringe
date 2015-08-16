@@ -2,23 +2,24 @@
 /// <reference path="../definitions/api.d.ts"/>
 
 import 'es6-promise';
-import {Injector, Token, bind} from '../src/index';
+import {Injector, Token, Lazy, bind} from '../src/index';
 import {CyclicDependencyError, NoBoundTokenError} from '../src/errors';
+import {envSupportsFunctionName} from './test-helpers'; 
 
-describe('injector with missing bindings', () => {
-  let oneToken = new Token<number>();
-  let twoToken = new Token<number>();
-  let threeToken = new Token<number>();
-  
+class OneToken extends Token<number> {}
+class TwoToken extends Token<number> {}
+class ThreeToken extends Token<number> {}
+
+describe('injector with missing bindings', () => {  
   it('should reject the returned promise when trying to get an unbound token', (done) => {
     let injector: Syringe.IInjector;
     let bindings = [
-      bind(oneToken).toFactory(() => 1)                         
+      bind(OneToken).toFactory(() => 1)                         
     ];
     
     injector = new Injector(bindings);
     
-    injector.get(twoToken).catch((error) => {
+    injector.get(TwoToken).catch((error) => {
       expect(error).toEqual(jasmine.any(NoBoundTokenError));
       done();
     });
@@ -27,61 +28,74 @@ describe('injector with missing bindings', () => {
   it('should reject the returned promise when trying to get a value that is dependent on an unbound token', (done) => {
     let injector: Syringe.IInjector;
     let bindings = [
-      bind(oneToken).toFactory(() => 1),
-      bind(threeToken).toFactory(two => two + 1,
-                                  twoToken)                         
+      bind(OneToken).toFactory(() => 1),
+      bind(ThreeToken).toAsyncFactory(lazyTwo => lazyTwo.get().then(two => two + 1),
+                                  Lazy(TwoToken))                         
     ];
     
     injector = new Injector(bindings);
     
-    injector.get(threeToken).catch((error) => {
+    injector.get(ThreeToken).catch((error) => {
       expect(error).toEqual(jasmine.any(NoBoundTokenError));
+      
+      if (envSupportsFunctionName()) {
+        expect(error.message).toContain('Lazy(TwoToken)');
+      }
+      
       done();
     });
   });
   
   it('should throw when encountering a cyclic dependency', () => {
     let injector = new Injector([
-      bind(oneToken).toFactory(two => two - 1,
-                              twoToken),
-      bind(twoToken).toFactory(one => one + 1,
-                              oneToken)
+      bind(OneToken).toFactory(two => two - 1,
+                              TwoToken),
+      bind(TwoToken).toFactory(one => one + 1,
+                              OneToken)
     ]);
     
     expect(() => {
-      injector.get(oneToken);
+      injector.get(OneToken);
     }).toThrowError(CyclicDependencyError)
     
     expect(() => {
-      injector.get(twoToken);
+      injector.get(TwoToken);
     }).toThrowError(CyclicDependencyError);
+    
+    try {
+      injector.get(TwoToken);
+    } catch(e) {
+      if (envSupportsFunctionName()) {
+        expect(e.message).toContain('TwoToken -> OneToken -> TwoToken');
+      }
+    }
   });
   
   it('should not throw when there\'s a pseudo-cyclic dependency with a parent injector', done => {
     let parentInjector = new Injector([
-      bind(oneToken).toFactory(two => two - 1,
-                               twoToken),
-      bind(twoToken).toValue(2),
+      bind(OneToken).toFactory(two => two - 1,
+                               TwoToken),
+      bind(TwoToken).toValue(2),
     ])
     
     let injector = new Injector([
-      bind(twoToken).toFactory(three => three - 1,
-                              threeToken),
-      bind(threeToken).toFactory(one => one * 3,
-                                  oneToken)                      
+      bind(TwoToken).toFactory(three => three - 1,
+                              ThreeToken),
+      bind(ThreeToken).toFactory(one => one * 3,
+                                  OneToken)                      
     ], parentInjector);
     
     expect(() => {
-      injector.get(oneToken);
+      injector.get(OneToken);
     }).not.toThrowError(CyclicDependencyError)
     
     expect(() => {
-      injector.get(twoToken);
+      injector.get(TwoToken);
     }).not.toThrowError(CyclicDependencyError);
     
     Promise.all([
-      injector.get(oneToken),
-      injector.get(twoToken)
+      injector.get(OneToken),
+      injector.get(TwoToken)
     ]).then(([one, two]) => {
       expect(one).toBe(1);
       expect(two).toBe(2);

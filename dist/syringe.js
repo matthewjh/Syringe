@@ -75,19 +75,20 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var CyclicDependencyError = (function (_super) {
     __extends(CyclicDependencyError, _super);
-    function CyclicDependencyError() {
+    function CyclicDependencyError(tokenChain) {
         _super.call(this);
         this.name = 'CyclicDependencyError';
+        this.message = tokenChain.map(function (t) { return t.getDebugName(); }).join(' -> ');
     }
     return CyclicDependencyError;
 })(Error);
 exports.CyclicDependencyError = CyclicDependencyError;
 var NoBoundTokenError = (function (_super) {
     __extends(NoBoundTokenError, _super);
-    function NoBoundTokenError() {
+    function NoBoundTokenError(token) {
         _super.call(this);
         this.name = 'NoBoundTokenError';
-        this.message = 'No bound token found during a token lookup. Check that all of your dependencies are bound';
+        this.message = "Tried to get " + token.getDebugName() + " from an injector, but it's not bound.";
     }
     return NoBoundTokenError;
 })(Error);
@@ -99,10 +100,14 @@ var binding_1 = require('./binding');
 var injector_1 = require('./injector');
 var token_1 = require('./token');
 var decorators_1 = require('./decorators');
-exports.bind = binding_1.bind;
-exports.Injector = injector_1.Injector;
+// Check assignability to public API types
+var Token = token_1.Token;
 exports.Inject = decorators_1.Inject;
-exports.Token = token_1.Token;
+exports.Injector = injector_1.Injector;
+exports.bind = binding_1.bind;
+exports.Lazy = token_1.Lazy;
+var token_2 = require('./token');
+exports.Token = token_2.Token;
 
 },{"./binding":1,"./decorators":2,"./injector":5,"./token":11}],5:[function(require,module,exports){
 /// <reference path="../definitions/definitions.d.ts"/>
@@ -110,6 +115,7 @@ exports.Token = token_1.Token;
 require('es6-promise');
 var facade_1 = require('./provider/facade');
 var binding_1 = require('./binding');
+var token_1 = require('./token');
 var errors_1 = require('./errors');
 var Injector = (function () {
     function Injector(bindings, parent) {
@@ -122,7 +128,7 @@ var Injector = (function () {
     Injector.prototype.get = function (token) {
         var index = this._getIndexForToken(token);
         if (index !== -1) {
-            return this._getByIndex(index, []);
+            return this._getByIndex(index, [], []);
         }
         else {
             return this._getFromParent(token);
@@ -133,31 +139,34 @@ var Injector = (function () {
             return this._parent.get(token);
         }
         else {
-            var error = new errors_1.NoBoundTokenError();
+            var error = new errors_1.NoBoundTokenError(token);
             return Promise.reject(error);
         }
     };
-    Injector.prototype._getByIndex = function (index, indexLog) {
+    Injector.prototype._getByIndex = function (index, indexLog, tokenChain) {
         var promise = this._cache[index];
         if (!promise) {
-            promise = this._getByIndexLookup(index, indexLog);
+            promise = this._getByIndexLookup(index, indexLog, tokenChain);
             this._cache[index] = promise;
         }
         return promise;
     };
-    Injector.prototype._getByIndexLookup = function (index, indexLog) {
+    Injector.prototype._getByIndexLookup = function (index, indexLog, tokenChain) {
         var _this = this;
+        var token = this._tokens[index];
         var provider = this._providers[index];
-        this._detectCycle(index, indexLog);
+        tokenChain.push(token);
+        this._detectCycle(index, indexLog, tokenChain);
         indexLog[index] = true;
         var dependencyPromises = provider.dependencyIndices.map(function (depIndex, i) {
             if (depIndex === -1) {
-                var token = provider.dependencyTokens[i];
-                return _this._getFromParent(token);
+                var token_2 = provider.dependencyTokens[i];
+                return _this._getFromParent(token_2);
             }
             else {
                 var clonedIndexLog = indexLog.slice();
-                return _this._getByIndex(depIndex, clonedIndexLog);
+                var clonedTokenChain = tokenChain.slice();
+                return _this._getByIndex(depIndex, clonedIndexLog, tokenChain);
             }
         });
         return Promise.all(dependencyPromises).then(function (dependencies) {
@@ -182,22 +191,22 @@ var Injector = (function () {
     };
     Injector.prototype._getLazyBindings = function (bindings) {
         var _this = this;
-        return bindings.map(function (b) { return binding_1.bind(b.token.asLazy).toValue({
+        return bindings.map(function (b) { return binding_1.bind(token_1.Lazy(b.token)).toValue({
             get: function () {
                 return _this.get(b.token);
             }
         }); });
     };
-    Injector.prototype._detectCycle = function (index, indexLog) {
+    Injector.prototype._detectCycle = function (index, indexLog, tokenChain) {
         if (indexLog[index]) {
-            throw new errors_1.CyclicDependencyError();
+            throw new errors_1.CyclicDependencyError(tokenChain);
         }
     };
     return Injector;
 })();
 exports.Injector = Injector;
 
-},{"./binding":1,"./errors":3,"./provider/facade":7,"es6-promise":13}],6:[function(require,module,exports){
+},{"./binding":1,"./errors":3,"./provider/facade":7,"./token":11,"es6-promise":13}],6:[function(require,module,exports){
 /// <reference path="../../definitions/definitions.d.ts"/>
 /// <reference path="../../definitions/api.d.ts"/>
 require('es6-promise');
@@ -295,22 +304,38 @@ exports.ValueProvider = ValueProvider;
 },{"es6-promise":13}],11:[function(require,module,exports){
 /// <reference path="../definitions/definitions.d.ts"/>
 /// <reference path="../definitions/api.d.ts"/>
+// For envs that lack Function#name
+var FALLBACK_TOKEN_DEBUG_NAME = 'Token';
 var Token = (function () {
     function Token() {
+        throw new Error("Do not instantiate Token directly. Instead create tokens by subclassing or by using Token.create");
     }
-    Object.defineProperty(Token.prototype, "asLazy", {
-        get: function () {
-            if (!this._lazyToken) {
-                this._lazyToken = new Token();
-            }
-            return this._lazyToken;
-        },
-        enumerable: true,
-        configurable: true
-    });
+    Token.getDebugName = function () {
+        return this.name || FALLBACK_TOKEN_DEBUG_NAME;
+    };
+    Token.create = function (debugName) {
+        if (debugName === void 0) { debugName = FALLBACK_TOKEN_DEBUG_NAME; }
+        return createInlineToken(debugName);
+    };
     return Token;
 })();
 exports.Token = Token;
+function createInlineToken(debugName) {
+    // Until TypeScript allows class expressions
+    function InlineToken() {
+        Token.apply(this, arguments);
+    }
+    InlineToken.prototype = Object.create(Token.prototype);
+    InlineToken['getDebugName'] = function () { return debugName; };
+    return InlineToken;
+}
+function Lazy(token) {
+    if (!token['___lazyToken']) {
+        token['___lazyToken'] = Token.create("Lazy(" + token.getDebugName() + ")");
+    }
+    return token['___lazyToken'];
+}
+exports.Lazy = Lazy;
 
 },{}],12:[function(require,module,exports){
 // shim for using process in browser
