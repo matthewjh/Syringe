@@ -4,6 +4,7 @@
 import 'es6-promise';
 import {Injector, Token, bind} from '../src/index';
 import {CyclicDependencyError, NoBoundTokenError} from '../src/errors';
+import {envSupportsFunctionName} from './test-helpers'; 
 
 class OneToken extends Token<number> {}
 class TwoToken extends Token<number> {}
@@ -36,7 +37,11 @@ describe('injector with missing bindings', () => {
     
     injector.get(ThreeToken).catch((error) => {
       expect(error).toEqual(jasmine.any(NoBoundTokenError));
-      expect(error.message).toContain('TwoToken');
+      
+      if (envSupportsFunctionName()) {
+        expect(error.message).toContain('TwoToken');
+      }
+      
       done();
     });
   });
@@ -60,7 +65,9 @@ describe('injector with missing bindings', () => {
     try {
       injector.get(TwoToken);
     } catch(e) {
-      expect(e.message).toContain('TwoToken -> OneToken -> TwoToken');
+      if (envSupportsFunctionName()) {
+        expect(e.message).toContain('TwoToken -> OneToken -> TwoToken');
+      }
     }
   });
   
