@@ -1,12 +1,12 @@
 /// <reference path="../definitions/definitions.d.ts"/>
-/// <reference path="./syringe.d.ts"/>
 
 import 'es6-promise';
 import {IndexedProvider} from './provider/facade';
 import {CyclicDependencyError, NoBoundTokenError} from './errors';
 
-import {bind, IBinding} from 'syringe.ts/binding';
-import {IToken, Lazy} from 'syringe.ts/token';
+import {bind, IBinding} from './binding';
+import {IToken} from './token';
+import {Lazy} from './lazy';
 
 interface IIndexLog extends Array<boolean> {
   [index: number]: (boolean | typeof undefined);

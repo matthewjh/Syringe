@@ -5,7 +5,6 @@
 *            See https://github.com/matthewjh/Syringe/blob/master/LICENSE
 */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.syringe = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /// <reference path="../definitions/definitions.d.ts"/>
-/// <reference path="../definitions/api.d.ts"/>
 var facade_1 = require('./provider/facade');
 var Binding = (function () {
     function Binding(token, provider) {
@@ -49,9 +48,8 @@ function bind(token) {
 }
 exports.bind = bind;
 
-},{"./provider/facade":7}],2:[function(require,module,exports){
+},{"./provider/facade":9}],2:[function(require,module,exports){
 /// <reference path="../definitions/definitions.d.ts"/>
-/// <reference path="../definitions/api.d.ts"/>
 function Inject() {
     var dependencyTokens = [];
     for (var _i = 0; _i < arguments.length; _i++) {
@@ -95,28 +93,24 @@ var NoBoundTokenError = (function (_super) {
 exports.NoBoundTokenError = NoBoundTokenError;
 
 },{}],4:[function(require,module,exports){
-/// <reference path="../definitions/api.d.ts"/>
-var binding_1 = require('./binding');
 var injector_1 = require('./injector');
-var token_1 = require('./token');
-var decorators_1 = require('./decorators');
-// Check assignability to public API types
-var Token = token_1.Token;
-exports.Inject = decorators_1.Inject;
 exports.Injector = injector_1.Injector;
+var token_1 = require('./token');
+exports.Token = token_1.Token;
+var lazy_1 = require('./lazy');
+exports.Lazy = lazy_1.Lazy;
+var decorators_1 = require('./decorators');
+exports.Inject = decorators_1.Inject;
+var binding_1 = require('./binding');
 exports.bind = binding_1.bind;
-exports.Lazy = token_1.Lazy;
-var token_2 = require('./token');
-exports.Token = token_2.Token;
 
-},{"./binding":1,"./decorators":2,"./injector":5,"./token":11}],5:[function(require,module,exports){
+},{"./binding":1,"./decorators":2,"./injector":5,"./lazy":6,"./token":13}],5:[function(require,module,exports){
 /// <reference path="../definitions/definitions.d.ts"/>
-/// <reference path="../definitions/api.d.ts"/>
 require('es6-promise');
 var facade_1 = require('./provider/facade');
-var binding_1 = require('./binding');
-var token_1 = require('./token');
 var errors_1 = require('./errors');
+var binding_1 = require('./binding');
+var lazy_1 = require('./lazy');
 var Injector = (function () {
     function Injector(bindings, parent) {
         this._tokens = [];
@@ -160,8 +154,8 @@ var Injector = (function () {
         indexLog[index] = true;
         var dependencyPromises = provider.dependencyIndices.map(function (depIndex, i) {
             if (depIndex === -1) {
-                var token_2 = provider.dependencyTokens[i];
-                return _this._getFromParent(token_2);
+                var token_1 = provider.dependencyTokens[i];
+                return _this._getFromParent(token_1);
             }
             else {
                 var clonedIndexLog = indexLog.slice();
@@ -191,7 +185,7 @@ var Injector = (function () {
     };
     Injector.prototype._getLazyBindings = function (bindings) {
         var _this = this;
-        return bindings.map(function (b) { return binding_1.bind(token_1.Lazy(b.token)).toValue({
+        return bindings.map(function (b) { return binding_1.bind(lazy_1.Lazy(b.token)).toValue({
             get: function () {
                 return _this.get(b.token);
             }
@@ -206,9 +200,22 @@ var Injector = (function () {
 })();
 exports.Injector = Injector;
 
-},{"./binding":1,"./errors":3,"./provider/facade":7,"./token":11,"es6-promise":13}],6:[function(require,module,exports){
+},{"./binding":1,"./errors":3,"./lazy":6,"./provider/facade":9,"es6-promise":15}],6:[function(require,module,exports){
+/// <reference path="../definitions/definitions.d.ts"/>
+var token_1 = require('./token');
+function Lazy(token) {
+    if (!token['___lazyToken']) {
+        token['___lazyToken'] = token_1.Token.create("Lazy(" + token.getDebugName() + ")");
+    }
+    return token['___lazyToken'];
+}
+exports.Lazy = Lazy;
+
+},{"./token":13}],7:[function(require,module,exports){
+
+
+},{}],8:[function(require,module,exports){
 /// <reference path="../../definitions/definitions.d.ts"/>
-/// <reference path="../../definitions/api.d.ts"/>
 require('es6-promise');
 var ClassProvider = (function () {
     function ClassProvider(Class, dependencyTokens) {
@@ -229,7 +236,7 @@ var ClassProvider = (function () {
 })();
 exports.ClassProvider = ClassProvider;
 
-},{"es6-promise":13}],7:[function(require,module,exports){
+},{"es6-promise":15}],9:[function(require,module,exports){
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
@@ -237,10 +244,10 @@ __export(require('./value'));
 __export(require('./factory'));
 __export(require('./indexed'));
 __export(require('./class'));
+__export(require('./abstract'));
 
-},{"./class":6,"./factory":8,"./indexed":9,"./value":10}],8:[function(require,module,exports){
+},{"./abstract":7,"./class":8,"./factory":10,"./indexed":11,"./value":12}],10:[function(require,module,exports){
 /// <reference path="../../definitions/definitions.d.ts"/>
-/// <reference path="../../definitions/api.d.ts"/>
 require('es6-promise');
 var FactoryProvider = (function () {
     function FactoryProvider(factory, dependencyTokens) {
@@ -265,9 +272,8 @@ var AsyncFactoryProvider = (function () {
 })();
 exports.AsyncFactoryProvider = AsyncFactoryProvider;
 
-},{"es6-promise":13}],9:[function(require,module,exports){
+},{"es6-promise":15}],11:[function(require,module,exports){
 /// <reference path="../../definitions/definitions.d.ts"/>
-/// <reference path="../../definitions/api.d.ts"/>
 var IndexedProvider = (function () {
     function IndexedProvider(provider, getIndexForToken) {
         this._provider = provider;
@@ -281,9 +287,8 @@ var IndexedProvider = (function () {
 })();
 exports.IndexedProvider = IndexedProvider;
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /// <reference path="../../definitions/definitions.d.ts"/>
-/// <reference path="../../definitions/api.d.ts"/>
 require('es6-promise');
 var ValueProvider = (function () {
     function ValueProvider(value) {
@@ -301,9 +306,8 @@ var ValueProvider = (function () {
 })();
 exports.ValueProvider = ValueProvider;
 
-},{"es6-promise":13}],11:[function(require,module,exports){
+},{"es6-promise":15}],13:[function(require,module,exports){
 /// <reference path="../definitions/definitions.d.ts"/>
-/// <reference path="../definitions/api.d.ts"/>
 // For envs that lack Function#name
 var FALLBACK_TOKEN_DEBUG_NAME = 'Token';
 var Token = (function () {
@@ -329,15 +333,8 @@ function createInlineToken(debugName) {
     InlineToken['getDebugName'] = function () { return debugName; };
     return InlineToken;
 }
-function Lazy(token) {
-    if (!token['___lazyToken']) {
-        token['___lazyToken'] = Token.create("Lazy(" + token.getDebugName() + ")");
-    }
-    return token['___lazyToken'];
-}
-exports.Lazy = Lazy;
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -429,7 +426,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 (function (process,global){
 /*!
  * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -1405,5 +1402,5 @@ process.umask = function() { return 0; };
 
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":12}]},{},[4])(4)
+},{"_process":14}]},{},[4])(4)
 });

@@ -1,4 +1,4 @@
-import {IToken} from 'syringe.ts/token';
+import {IToken} from './token';
 
 export class CyclicDependencyError extends Error { 
   public name = 'CyclicDependencyError';

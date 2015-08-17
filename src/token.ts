@@ -1,8 +1,7 @@
 /// <reference path="../definitions/definitions.d.ts"/>
-/// <reference path="./syringe.d.ts"/>
 
-import {IToken} from 'syringe.ts/token';
-import {ILazy} from 'syringe.ts/lazy';
+import {IToken} from './token';
+import {ILazy} from './lazy';
 
 // For envs that lack Function#name
 const FALLBACK_TOKEN_DEBUG_NAME = 'Token';
@@ -39,12 +38,4 @@ function createInlineToken<T>(debugName): IToken<T> {
 	InlineToken['getDebugName'] = () => debugName; 
 	
 	return <any>InlineToken;
-}
-
-export function Lazy<T>(token: IToken<T>): IToken<ILazy<T>> {
-	if (!token['___lazyToken']) {
-		token['___lazyToken'] = Token.create<ILazy<T>>(`Lazy(${token.getDebugName()})`);
-	}
-	
-	return token['___lazyToken'];
 }

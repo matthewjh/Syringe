@@ -9,6 +9,7 @@ var copy = require('gulp-copy');
 var concat = require('gulp-concat-util');
 var exec = require('child_process').exec;
 var fs = require('fs');
+var merge = require('merge2');
 
 function runKarmaTests(confFile) {
   var karma = require('gulp-karma');
@@ -37,14 +38,18 @@ gulp.task('build', function (done) {
   var filesGlob = tsconfig.filesGlob;
 
   tsconfig.compilerOptions.typescript = require('typescript');
+  
+  var tsResult = gulp.src(filesGlob)
+      .pipe(ts(tsconfig.compilerOptions));   
 
-  return gulp.src(filesGlob)
-    .pipe(ts(tsconfig.compilerOptions))
-    .pipe(gulp.dest(tsconfig.compilerOptions.outDir));
+  return merge([
+    tsResult.dts.pipe(gulp.dest(tsconfig.compilerOptions.outDir)),
+    tsResult.js.pipe(gulp.dest(tsconfig.compilerOptions.outDir))
+  ]);
 });
 
 gulp.task('copy-api-definitions', function () {
-  return gulp.src('./definitions/api.d.ts')
+  return gulp.src('./built/src/index.d.ts')
     .pipe(rename('syringe.d.ts'))
     .pipe(gulp.dest('./dist'));
 });

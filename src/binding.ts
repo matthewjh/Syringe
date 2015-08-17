@@ -1,8 +1,7 @@
 /// <reference path="../definitions/definitions.d.ts"/>
-/// <reference path="./syringe.d.ts"/>
 
-import {IToken} from 'syringe.ts/token';
-import {IProvider, ValueProvider, FactoryProvider, AsyncFactoryProvider, ClassProvider} from 'syringe.ts/provider/facade';
+import {IToken} from './token';
+import {IProvider, ValueProvider, FactoryProvider, AsyncFactoryProvider, ClassProvider} from './provider/facade';
 
 export interface IBinding<T> {
   token: IToken<T>;

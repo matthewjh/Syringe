@@ -1,8 +1,7 @@
 /// <reference path="../../definitions/definitions.d.ts"/>
-/// <reference path="../syringe.d.ts"/>
 
-import {IToken} from 'syringe.ts/token';
-import {IProvider} from 'syringe.ts/provider/abstract';
+import {IToken} from '../token';
+import {IProvider} from './abstract';
 
 export class IndexedProvider<T> implements IProvider<T> {
   public dependencyTokens: IToken<any>[];

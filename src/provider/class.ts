@@ -1,11 +1,10 @@
 /// <reference path="../../definitions/definitions.d.ts"/>
-/// <reference path="../syringe.d.ts"/>
 
 import 'es6-promise';
 
-import {IToken} from 'syringe.ts/token';
-import {IProvider} from 'syringe.ts/provider/abstract';
-import {IStaticThatMaybeHasTokens} from 'syringe.ts/decorators';
+import {IToken} from '../token';
+import {IProvider} from './abstract';
+import {IStaticThatMaybeHasTokens} from '../decorators';
 
 export class ClassProvider<T> implements IProvider<T> {
   public dependencyTokens: IToken<any>[];

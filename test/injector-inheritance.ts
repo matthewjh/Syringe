@@ -1,5 +1,4 @@
 /// <reference path="../definitions/definitions.d.ts"/>
-/// <reference path="../definitions/api.d.ts"/>
 
 import 'es6-promise';
 import {Injector, Token, bind} from '../src/index';
