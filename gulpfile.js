@@ -82,6 +82,6 @@ gulp.task('unit', ['build'], function () {
   runKarmaTests('karma.conf.js');
 });
 
-gulp.task('unit.ci', ['build'], function () {
+gulp.task('unit.sauce', ['build'], function () {
   runKarmaTests('karma-sauce.conf.js');
 });
