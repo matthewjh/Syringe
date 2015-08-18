@@ -15,7 +15,6 @@
   ],
   "main": "dist/syringe.js",
   "scripts": {
-    "postinstall": "$(npm bin)/tsd install",
     "test": "$(npm bin)/gulp unit.sauce"
   },
   "repository": {
