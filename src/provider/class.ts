@@ -3,11 +3,12 @@ import 'es6-promise';
 import {IToken} from '../token';
 import {IProvider} from './abstract';
 import {IStaticThatMaybeHasTokens} from '../decorators';
+import {IStatic} from '../shared-interfaces';
 
 export class ClassProvider<T> implements IProvider<T> {
   public dependencyTokens: IToken<any>[];
   
-  private _Class: Syringe.IStatic<T>;
+  private _Class: IStatic<T>;
   
   constructor(Class: IStaticThatMaybeHasTokens<any, any, any, any, any, any, any, any, any>, dependencyTokens: IToken<any>[]) {
     this.dependencyTokens = dependencyTokens;
