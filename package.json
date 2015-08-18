@@ -15,7 +15,8 @@
   ],
   "main": "dist/syringe.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "gulp test",
+    "postinstall": "tsd install"
   },
   "repository": {
     "type": "git",
