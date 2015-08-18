@@ -1,8 +1,6 @@
 language: node_js
 node_js:
   - "stable"
-before_script:
-  - npm install -g gulp
 cache:
   directories:
     - node_modules
