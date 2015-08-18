@@ -4,7 +4,6 @@
 * @license   Licensed under MIT license
 *            See https://github.com/matthewjh/Syringe/blob/master/LICENSE
 */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.syringe = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/// <reference path="../definitions/definitions.d.ts"/>
 var facade_1 = require('./provider/facade');
 var Binding = (function () {
     function Binding(token, provider) {
@@ -49,16 +48,11 @@ function bind(token) {
 exports.bind = bind;
 
 },{"./provider/facade":9}],2:[function(require,module,exports){
-/// <reference path="../definitions/definitions.d.ts"/>
-function Inject() {
-    var dependencyTokens = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        dependencyTokens[_i - 0] = arguments[_i];
-    }
+function Inject(token1, token2, token3, token4, token5, token6, token7, token8) {
     return function (Class) {
         Object.defineProperty(Class, '___tokens', {
             enumerable: false,
-            value: dependencyTokens
+            value: [token1, token2, token3, token4, token5, token6, token7, token8].filter(function (t) { return t != null; })
         });
         return Class;
     };
@@ -105,7 +99,6 @@ var binding_1 = require('./binding');
 exports.bind = binding_1.bind;
 
 },{"./binding":1,"./decorators":2,"./injector":5,"./lazy":6,"./token":13}],5:[function(require,module,exports){
-/// <reference path="../definitions/definitions.d.ts"/>
 require('es6-promise');
 var facade_1 = require('./provider/facade');
 var errors_1 = require('./errors');
@@ -201,7 +194,6 @@ var Injector = (function () {
 exports.Injector = Injector;
 
 },{"./binding":1,"./errors":3,"./lazy":6,"./provider/facade":9,"es6-promise":15}],6:[function(require,module,exports){
-/// <reference path="../definitions/definitions.d.ts"/>
 var token_1 = require('./token');
 function Lazy(token) {
     if (!token['___lazyToken']) {
@@ -215,7 +207,6 @@ exports.Lazy = Lazy;
 
 
 },{}],8:[function(require,module,exports){
-/// <reference path="../../definitions/definitions.d.ts"/>
 require('es6-promise');
 var ClassProvider = (function () {
     function ClassProvider(Class, dependencyTokens) {
@@ -247,7 +238,6 @@ __export(require('./class'));
 __export(require('./abstract'));
 
 },{"./abstract":7,"./class":8,"./factory":10,"./indexed":11,"./value":12}],10:[function(require,module,exports){
-/// <reference path="../../definitions/definitions.d.ts"/>
 require('es6-promise');
 var FactoryProvider = (function () {
     function FactoryProvider(factory, dependencyTokens) {
@@ -273,7 +263,6 @@ var AsyncFactoryProvider = (function () {
 exports.AsyncFactoryProvider = AsyncFactoryProvider;
 
 },{"es6-promise":15}],11:[function(require,module,exports){
-/// <reference path="../../definitions/definitions.d.ts"/>
 var IndexedProvider = (function () {
     function IndexedProvider(provider, getIndexForToken) {
         this._provider = provider;
@@ -288,7 +277,6 @@ var IndexedProvider = (function () {
 exports.IndexedProvider = IndexedProvider;
 
 },{}],12:[function(require,module,exports){
-/// <reference path="../../definitions/definitions.d.ts"/>
 require('es6-promise');
 var ValueProvider = (function () {
     function ValueProvider(value) {
@@ -307,7 +295,6 @@ var ValueProvider = (function () {
 exports.ValueProvider = ValueProvider;
 
 },{"es6-promise":15}],13:[function(require,module,exports){
-/// <reference path="../definitions/definitions.d.ts"/>
 // For envs that lack Function#name
 var FALLBACK_TOKEN_DEBUG_NAME = 'Token';
 var Token = (function () {

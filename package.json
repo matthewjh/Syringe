@@ -29,6 +29,7 @@
   "homepage": "https://github.com/matthewjh/Syringe#readme",
   "devDependencies": {
     "browserify": "^11.0.1",
+    "dts-bundle": "^0.3.0",
     "es6-promise": "^2.3.0",
     "gulp": "^3.9.0",
     "gulp-concat-util": "^0.5.2",
