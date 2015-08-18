@@ -1,5 +1,3 @@
-/// <reference path="../definitions/definitions.d.ts"/>
-
 import {IToken} from './token';
 
 interface IStatic<T> {

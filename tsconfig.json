@@ -10,7 +10,8 @@
   },
   "filesGlob": [
     "src/**/*.ts",
+    "src/**/*.d.ts",
     "test/**/*.ts",
-    "definitions/**/*.d.ts"
+    "typings/**/*.d.ts"
   ]
 }

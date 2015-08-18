@@ -1,5 +1,3 @@
-/// <reference path="../../definitions/definitions.d.ts"/>
-
 import 'es6-promise';
 
 import {IToken} from '../token';

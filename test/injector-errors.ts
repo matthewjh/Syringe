@@ -1,5 +1,3 @@
-/// <reference path="../definitions/definitions.d.ts"/>
-
 import 'es6-promise';
 import {Injector, Token, Lazy, bind} from '../src/index';
 import {CyclicDependencyError, NoBoundTokenError} from '../src/errors';

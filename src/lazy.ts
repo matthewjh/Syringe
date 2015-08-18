@@ -1,5 +1,3 @@
-/// <reference path="../definitions/definitions.d.ts"/>
-
 import {IToken, Token} from './token';
 
 export interface ILazy<T> {

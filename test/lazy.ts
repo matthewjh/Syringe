@@ -1,5 +1,3 @@
-/// <reference path="../definitions/definitions.d.ts"/>
-
 import 'es6-promise';
 import {Injector, Inject, Token, Lazy, ILazy, bind} from '../src/index';
 

@@ -1,5 +1,3 @@
-/// <reference path="../definitions/definitions.d.ts"/>
-
 import 'es6-promise';
 import {IndexedProvider} from './provider/facade';
 import {CyclicDependencyError, NoBoundTokenError} from './errors';
