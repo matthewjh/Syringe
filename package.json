@@ -50,5 +50,8 @@
     "typescript": "^1.6.0-dev.20150805",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
+  },
+  "typescript": {
+      "definition": "dist/syringe.d.ts"
   }
 }
