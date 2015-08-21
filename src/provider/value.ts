@@ -1,10 +1,10 @@
-/// <reference path="../../definitions/definitions.d.ts"/>
-/// <reference path="../../definitions/api.d.ts"/>
-
 import 'es6-promise';
 
-export class ValueProvider<T> implements Syringe.Provider.IProvider<T> {
-  public dependencyTokens: Syringe.IToken<any>[];
+import {IToken} from '../token';
+import {IProvider} from './abstract';
+
+export class ValueProvider<T> implements IProvider<T> {
+  public dependencyTokens: IToken<any>[];
   
   private _value: T; 
   

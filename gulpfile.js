@@ -9,6 +9,7 @@ var copy = require('gulp-copy');
 var concat = require('gulp-concat-util');
 var exec = require('child_process').exec;
 var fs = require('fs');
+var merge = require('merge2');
 
 function runKarmaTests(confFile) {
   var karma = require('gulp-karma');
@@ -37,14 +38,18 @@ gulp.task('build', function (done) {
   var filesGlob = tsconfig.filesGlob;
 
   tsconfig.compilerOptions.typescript = require('typescript');
+  
+  var tsResult = gulp.src(filesGlob)
+      .pipe(ts(tsconfig.compilerOptions));   
 
-  return gulp.src(filesGlob)
-    .pipe(ts(tsconfig.compilerOptions))
-    .pipe(gulp.dest(tsconfig.compilerOptions.outDir));
+  return merge([
+    tsResult.dts.pipe(gulp.dest(tsconfig.compilerOptions.outDir)),
+    tsResult.js.pipe(gulp.dest(tsconfig.compilerOptions.outDir))
+  ]);
 });
 
 gulp.task('copy-api-definitions', function () {
-  return gulp.src('./definitions/api.d.ts')
+  return gulp.src('./built/src/index.d.ts')
     .pipe(rename('syringe.d.ts'))
     .pipe(gulp.dest('./dist'));
 });
@@ -55,11 +60,13 @@ gulp.task('copy-definitions', ['copy-api-definitions'], function () {
 });
 
 gulp.task('package', ['build', 'copy-definitions'], function (done) {
-  var outFolder = './dist';
+  var bundleDts = require('./build/dts-bundle');
   var browserify = require('browserify');
   var config = require('./browserify.conf.js');
-  
+  var outFolder = './dist';
   var b = browserify(config);
+  
+  bundleDts();
 
   return b
     .bundle()
@@ -77,6 +84,6 @@ gulp.task('unit', ['build'], function () {
   runKarmaTests('karma.conf.js');
 });
 
-gulp.task('unit.ci', ['build'], function () {
+gulp.task('unit.sauce', ['build'], function () {
   runKarmaTests('karma-sauce.conf.js');
 });

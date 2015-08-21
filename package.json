@@ -15,7 +15,7 @@
   ],
   "main": "dist/syringe.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "$(npm bin)/gulp unit.sauce"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
   "homepage": "https://github.com/matthewjh/Syringe#readme",
   "devDependencies": {
     "browserify": "^11.0.1",
+    "dts-bundle": "^0.3.0",
     "es6-promise": "^2.3.0",
     "gulp": "^3.9.0",
     "gulp-concat-util": "^0.5.2",
@@ -44,6 +45,8 @@
     "karma-chrome-launcher": "^0.2.0",
     "karma-jasmine": "^0.3.6",
     "karma-sauce-launcher": "^0.2.14",
+    "merge2": "^0.3.6",
+    "tsd": "^0.6.3",
     "typescript": "^1.6.0-dev.20150805",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"

@@ -1,11 +1,10 @@
-/// <reference path="../definitions/definitions.d.ts"/>
-/// <reference path="../definitions/api.d.ts"/>
-
 import 'es6-promise';
 import {IndexedProvider} from './provider/facade';
-import {bind} from './binding';
-import {Lazy} from './token';
 import {CyclicDependencyError, NoBoundTokenError} from './errors';
+
+import {bind, IBinding} from './binding';
+import {IToken} from './token';
+import {Lazy} from './lazy';
 
 interface IIndexLog extends Array<boolean> {
   [index: number]: (boolean | typeof undefined);
@@ -15,13 +14,17 @@ interface ICache extends Array<Promise<any>> {
   [index: number]: Promise<any>;
 }
 
-export class Injector implements Syringe.IInjector {
-  private _tokens: Syringe.IToken<any>[];
+export interface IInjector {
+		get<T>(token: IToken<T>): Promise<T>;
+}
+
+export class Injector implements IInjector {
+  private _tokens: IToken<any>[];
   private _providers: IndexedProvider<any>[];
-  private _parent: Syringe.IInjector;
+  private _parent: IInjector;
   private _cache: ICache;
   
-  constructor(bindings: Syringe.Binding.IBinding<any>[], parent?: Syringe.IInjector) {
+  constructor(bindings: IBinding<any>[], parent?: IInjector) {
     this._tokens = [];
     this._providers = [];
     this._cache = [];
@@ -33,7 +36,7 @@ export class Injector implements Syringe.IInjector {
     );
   }
   
-  public get<T>(token: Syringe.IToken<T>): Promise<T> {
+  public get<T>(token: IToken<T>): Promise<T> {
     let index = this._getIndexForToken(token);
     
     if (index !== -1) {
@@ -43,7 +46,7 @@ export class Injector implements Syringe.IInjector {
     }
   }
 
-  private _getFromParent<T>(token: Syringe.IToken<T>): Promise<T> {
+  private _getFromParent<T>(token: IToken<T>): Promise<T> {
      if (this._parent) {
         return this._parent.get(token);
       } else {
@@ -53,7 +56,7 @@ export class Injector implements Syringe.IInjector {
       }
   }
   
-  private _getByIndex<T>(index: number, indexLog: IIndexLog, tokenChain: Syringe.IToken<any>[]): Promise<T> {
+  private _getByIndex<T>(index: number, indexLog: IIndexLog, tokenChain: IToken<any>[]): Promise<T> {
     let promise = this._cache[index];
     
     if (!promise) {
@@ -64,7 +67,7 @@ export class Injector implements Syringe.IInjector {
     return promise;
   }
   
-  private _getByIndexLookup<T>(index: number, indexLog: IIndexLog, tokenChain: Syringe.IToken<any>[]): Promise<T> {
+  private _getByIndexLookup<T>(index: number, indexLog: IIndexLog, tokenChain: IToken<any>[]): Promise<T> {
     let token = this._tokens[index];
     let provider = this._providers[index];
 
@@ -90,11 +93,11 @@ export class Injector implements Syringe.IInjector {
     });
   }
   
-  private _getIndexForToken(token: Syringe.IToken<any>): number {
+  private _getIndexForToken(token: IToken<any>): number {
     return this._tokens.indexOf(token);
   }
   
-  private _ingestBindings(...bindings: Syringe.Binding.IBinding<any>[][]): void {
+  private _ingestBindings(...bindings: IBinding<any>[][]): void {
     let allBindings = [].concat(...bindings);
      
     this._tokens = allBindings.map(b => b.token);
@@ -103,7 +106,7 @@ export class Injector implements Syringe.IInjector {
     });
   }
   
-  private _getLazyBindings(bindings: Syringe.Binding.IBinding<any>[]): Syringe.Binding.IBinding<any>[] {
+  private _getLazyBindings(bindings: IBinding<any>[]): IBinding<any>[] {
     return bindings.map(b => bind(Lazy(b.token)).toValue({
       get: () => {
         return this.get(b.token);
@@ -111,7 +114,7 @@ export class Injector implements Syringe.IInjector {
     }));
   }
   
-  private _detectCycle(index: number, indexLog: IIndexLog, tokenChain: Syringe.IToken<any>[]): void {
+  private _detectCycle(index: number, indexLog: IIndexLog, tokenChain: IToken<any>[]): void {
     if (indexLog[index]) {
       throw new CyclicDependencyError(tokenChain);
     }

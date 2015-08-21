@@ -1,8 +1,5 @@
-/// <reference path="../definitions/definitions.d.ts"/>
-/// <reference path="../definitions/api.d.ts"/>
-
-import 'es6-promise';
-import {Injector, Token, Inject, bind} from '../src/index';
+import 'es6-promise'; 
+import {Injector, Token, IToken, Inject, bind} from '../src/index';
 
 class AToken extends Token<A> {}
 class BToken extends Token<B> {}
@@ -57,14 +54,13 @@ class ClassReturningNumberFromConstructor {
 
 describe('injector with class bindings', () => {
   it('should correctly resolve values from tokens via class factories when tokens are passed', (done) => {
-    let injector: Syringe.IInjector;
     let bindings = [
       bind(AToken).toClass(A, OneToken),
       bind(BToken).toClass(B, AToken),
       bind(OneToken).toValue(1)                     
     ];
     
-    injector = new Injector(bindings);
+    let injector = new Injector(bindings);
     
     Promise.all(<Promise<any>[]>[
       injector.get(AToken),
@@ -77,14 +73,13 @@ describe('injector with class bindings', () => {
   });
   
   it('should correctly resolve classes when they decorated with tokens', (done) => {
-    let injector: Syringe.IInjector;
     let bindings = [
       bind(DecoratedAToken).toClass(DecoratedA),
       bind(DecoratedBToken).toClass(DecoratedB),
       bind(OneToken).toValue(1)                     
     ];
     
-    injector = new Injector(bindings);
+    let injector = new Injector(bindings);
     
     Promise.all(<Promise<any>[]>[
       injector.get(DecoratedAToken),

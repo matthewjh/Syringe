@@ -1,8 +1,5 @@
-/// <reference path="../definitions/definitions.d.ts"/>
-/// <reference path="../definitions/api.d.ts"/>
-
 import 'es6-promise';
-import {Injector, Inject, Token, Lazy, bind} from '../src/index';
+import {Injector, Inject, Token, Lazy, ILazy, bind} from '../src/index';
 
 class OneToken extends Token<number> {}
 class TwoToken extends Token<number> {}
@@ -11,8 +8,8 @@ class ClassToken extends Token<ClassWithLazyDependency> {}
  
 @Inject(Lazy(OneToken), Lazy(TwoToken))
 class ClassWithLazyDependency {
-  constructor(private _one: Syringe.ILazy<number>,
-              private _two: Syringe.ILazy<number>) {}
+  constructor(private _one: ILazy<number>,
+              private _two: ILazy<number>) {}
   
   get three(): Promise<number> {
     return Promise.all([
