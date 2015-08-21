@@ -9,6 +9,14 @@ var concat = require('gulp-concat-util');
 var exec = require('child_process').exec;
 var fs = require('fs');
 var merge = require('merge2');
+var bundleDts = require('./dts-bundle');
+var browserify = require('browserify');
+var config = require('./browserify.conf.js');
+
+var paths = {
+	builtFolder: '../built',
+	distFolder: '../dist'	
+};
 
 module.exports = function (gulp) {
 	function runKarmaTests(confFile) {
@@ -29,7 +37,7 @@ module.exports = function (gulp) {
 	}
 
 	gulp.task('clean-build-folder', function () {
-		return gulp.src('built/**/*', { read: false })
+		return gulp.src(paths.builtFolder + '**/*', { read: false })
 			.pipe(rimraf());
 	});
 
@@ -47,23 +55,8 @@ module.exports = function (gulp) {
 			tsResult.js.pipe(gulp.dest(tsconfig.compilerOptions.outDir))
 		]);
 	});
-
-	gulp.task('copy-api-definitions', function () {
-		return gulp.src('../built/src/index.d.ts')
-			.pipe(rename('syringe.d.ts'))
-			.pipe(gulp.dest('../dist'));
-	});
-
-	gulp.task('copy-definitions', ['copy-api-definitions'], function () {
-		return gulp.src('../definitions/es6-promise/**/*')
-			.pipe(gulp.dest('../dist/es6-promise'));
-	});
-
-	gulp.task('package', ['build', 'copy-definitions'], function (done) {
-		var bundleDts = require('./dts-bundle');
-		var browserify = require('browserify');
-		var config = require('./browserify.conf.js');
-		var outFolder = './dist';
+	
+	gulp.task('package', ['build'], function (done) {
 		var b = browserify(config);
 
 		bundleDts();
@@ -73,11 +66,11 @@ module.exports = function (gulp) {
 			.pipe(source('syringe.js'))
 			.pipe(buffer())
 			.pipe(concat.header(fs.readFileSync('./license-comment.txt')))
-			.pipe(gulp.dest(outFolder))
+			.pipe(gulp.dest(paths.distFolder))
 			.pipe(uglify())
 			.pipe(concat.header(fs.readFileSync('./license-comment.txt')))
 			.pipe(rename({ extname: '.min.js' }))
-			.pipe(gulp.dest(outFolder));
+			.pipe(gulp.dest(paths.distFolder));
 	});
 
 	gulp.task('unit', ['build'], function () {
