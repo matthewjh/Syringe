@@ -29,6 +29,8 @@
   "homepage": "https://github.com/matthewjh/Syringe#readme",
   "devDependencies": {
     "browserify": "^11.0.1",
+    "colors": "^1.1.2",
+    "deep-equal": "^1.0.0",
     "dts-bundle": "^0.3.0",
     "es6-promise": "^2.3.0",
     "gulp": "^3.9.0",
@@ -52,6 +54,6 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "typescript": {
-      "definition": "dist/syringe.d.ts"
+    "definition": "dist/syringe.d.ts"
   }
 }

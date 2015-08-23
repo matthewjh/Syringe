@@ -1,3 +1,4 @@
+var gulp = require('gulp');
 var ts = require('gulp-typescript');
 var rimraf = require('gulp-rimraf');
 var source = require('vinyl-source-stream');
@@ -18,7 +19,7 @@ var paths = {
 	distFolder: '../dist'	
 };
 
-module.exports = function (gulp) {
+module.exports = function () {
 	function runKarmaTests(confFile) {
 		var karma = require('gulp-karma');
 		var testFiles = [
@@ -80,4 +81,6 @@ module.exports = function (gulp) {
 	gulp.task('unit.sauce', ['build'], function () {
 		runKarmaTests('karma-sauce.conf.js');
 	});
+
+	gulp.task('test.tsc', require('./gulp-tasks/run-tsc-tests'));
 };

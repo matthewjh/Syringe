@@ -12,6 +12,7 @@
     "src/**/*.ts",
     "src/**/*.d.ts",
     "test/**/*.ts",
-    "typings/**/*.d.ts"
+    "typings/**/*.d.ts",
+    "!test/tsc-tests/**.ts"
   ]
 }

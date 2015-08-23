@@ -1,0 +1,14 @@
+{
+  "diagnostics": [
+    {
+      "message": "Cannot find name 'kgu'.",
+      "character": 1,
+      "line": 2
+    },
+    {
+      "message": "Cannot find name 'f'.",
+      "character": 0,
+      "line": 3
+    }
+  ]
+}
