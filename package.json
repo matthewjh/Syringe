@@ -33,6 +33,7 @@
     "deep-equal": "^1.0.0",
     "dts-bundle": "^0.3.0",
     "es6-promise": "^2.3.0",
+    "glob": "^5.0.14",
     "gulp": "^3.9.0",
     "gulp-concat-util": "^0.5.2",
     "gulp-copy": "0.0.2",

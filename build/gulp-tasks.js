@@ -82,5 +82,5 @@ module.exports = function () {
 		runKarmaTests('karma-sauce.conf.js');
 	});
 
-	gulp.task('test.tsc', require('./gulp-tasks/run-tsc-tests'));
+	gulp.task('test.tsc', ['build'], require('./gulp-tasks/run-tsc-tests'));
 };

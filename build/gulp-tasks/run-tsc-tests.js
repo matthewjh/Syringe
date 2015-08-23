@@ -1,12 +1,14 @@
 var gulp = require('gulp');
+var glob = require('glob');
 
 module.exports = function () {
 	var testLibModule = require('../../built/test/lib/tsc-tests/facade');
-	
 	var testRunner = new testLibModule.TestRunner();
-	var test = new testLibModule.Test('/Users/mattewhill/Documents/Personal/Syringe/test/tsc-tests/test.ts');
-	
-	var result = testRunner.runTests([test]);
+	var testFilePaths = glob.sync('test/tsc-tests/**/*.ts');
+	var tests = testFilePaths.map(function (p) {
+		return new testLibModule.Test(p);
+	});
+	var result = testRunner.runTests(tests);
 	
 	if (result.testsPassed) {
 		process.exit(0);
