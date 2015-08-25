@@ -47,6 +47,8 @@ module.exports = function () {
 		var filesGlob = tsconfig.filesGlob;
 
 		tsconfig.compilerOptions.typescript = require('typescript');
+		
+		bundleDts();
 
 		var tsResult = gulp.src(filesGlob)
 			.pipe(ts(tsconfig.compilerOptions));
@@ -59,7 +61,7 @@ module.exports = function () {
 	
 	gulp.task('package', ['build'], function (done) {
 		var b = browserify(config);
-
+		
 		bundleDts();
 
 		return b
@@ -74,11 +76,11 @@ module.exports = function () {
 			.pipe(gulp.dest(paths.distFolder));
 	});
 
-	gulp.task('unit', ['build'], function () {
+	gulp.task('test', ['build'], function () {
 		runKarmaTests('karma.conf.js');
 	});
 
-	gulp.task('unit.sauce', ['build'], function () {
+	gulp.task('test.sauce', ['build'], function () {
 		runKarmaTests('karma-sauce.conf.js');
 	});
 

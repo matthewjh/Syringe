@@ -1,6 +1,6 @@
 import {IToken} from './token';
 import {IProvider, ValueProvider, FactoryProvider, AsyncFactoryProvider, ClassProvider} from './provider/facade';
-import {IStaticWithArgs} from './shared-interfaces';
+import {IStaticWithArgs, IStatic} from './shared-interfaces';
 
 
 export interface IBinding<T> {
@@ -11,7 +11,7 @@ export interface IBinding<T> {
 export interface IUnprovidedBinding<T> {
   toValue(value: T): IBinding<T>;
 
-  toClass(Class: IStaticWithArgs<T, {}, {}, {}, {}, {}, {}, {}, {}>): IBinding<T>;
+  toClass(Class: IStatic<T>): IBinding<T>;
   toClass<T1>(Class: IStaticWithArgs<T, T1, {}, {}, {}, {}, {}, {}, {}>, token1: IToken<T1>): IBinding<T>;
   toClass<T1, T2>(Class: IStaticWithArgs<T, T1, T2, {}, {}, {}, {}, {}, {}>, token1: IToken<T1>, token2: IToken<T2>): IBinding<T>;
   toClass<T1, T2, T3>(Class: IStaticWithArgs<T, T1, T2, T3, {}, {}, {}, {}, {}>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>): IBinding<T>;

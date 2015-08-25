@@ -29,8 +29,7 @@ export class Test implements ITest {
 		let compileResult = this._compiler.compile([this.filePath], {
 			module: ModuleKind.CommonJS,
 			experimentalDecorators: true,
-			noEmit: true,
-			noResolve: true
+			noEmit: true
 		});
 		let expectedResult = this._getExpectedCompileResult();
 		let isPass = this._isPass(expectedResult, compileResult);

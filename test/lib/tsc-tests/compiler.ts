@@ -27,7 +27,7 @@ export class Compiler implements ICompiler {
 			let position = d.file.getLineAndCharacterOfPosition(d.start);
 			
 			return {
-				message: d.messageText.toString(),
+				message: ts.flattenDiagnosticMessageText(d.messageText, '\n'),
 				character: position.character,
 				line: position.line
 			};
