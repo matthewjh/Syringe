@@ -37,7 +37,7 @@ module.exports = function () {
 			});
 	}
 
-	gulp.task('clean-build-folder', function () {
+	gulp.task('clean-build-folder', function (done) {
 		return gulp.src(paths.builtFolder + '**/*', { read: false })
 			.pipe(rimraf());
 	});
