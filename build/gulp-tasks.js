@@ -16,7 +16,7 @@ var config = require('./browserify.conf.js');
 
 var paths = {
 	builtFolder: '../built',
-	distFolder: '../dist'	
+	distFolder: '../dist'
 };
 
 module.exports = function () {
@@ -25,7 +25,7 @@ module.exports = function () {
 		var testFiles = [
 			'built/test/**/*.js'
 		];
-	
+
 		return gulp.src(testFiles)
 			.pipe(karma({
 				configFile: confFile,
@@ -47,22 +47,19 @@ module.exports = function () {
 		var filesGlob = tsconfig.filesGlob;
 
 		tsconfig.compilerOptions.typescript = require('typescript');
-		
 
 		var tsResult = gulp.src(filesGlob)
 			.pipe(ts(tsconfig.compilerOptions));
 
-		merge([
+		return merge([
 			tsResult.dts.pipe(gulp.dest(tsconfig.compilerOptions.outDir)),
 			tsResult.js.pipe(gulp.dest(tsconfig.compilerOptions.outDir))
 		]);
-		
-		bundleDts();
 	});
-	
+
 	gulp.task('package', ['build'], function (done) {
 		var b = browserify(config);
-		
+
 		bundleDts();
 
 		return b
