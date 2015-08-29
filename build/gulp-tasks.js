@@ -39,7 +39,7 @@ module.exports = function () {
 	}
 
 	gulp.task('clean', function (done) {
-		rimraf('./' + paths.builtFolder, done);
+		rimraf('./built', done);
 	});
 	
 	gulp.task('clean-dist', function (done) {
@@ -58,7 +58,7 @@ module.exports = function () {
 		// A bit nasty
 		dtsDestStream
 		.on('end', function() {
-			bundleDts(path.resolve('built'));
+			bundleDts(path.resolve('built', 'src'));
 		});
 		
 		return merge(
