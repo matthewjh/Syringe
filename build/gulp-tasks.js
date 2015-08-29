@@ -42,23 +42,28 @@ module.exports = function () {
 			.pipe(rimraf());
 	});
 
-	gulp.task('build', function (done) {
+	gulp.task('build', function () {
 		var tsconfig = require('../tsconfig.json');
 		var filesGlob = tsconfig.filesGlob;
 
 		tsconfig.compilerOptions.typescript = require('typescript');
-
+		
 		var tsResult = gulp.src(filesGlob)
 			.pipe(ts(tsconfig.compilerOptions));
+		var dtsDestStream = tsResult.dts.pipe(gulp.dest(tsconfig.compilerOptions.outDir));
+		var tsDestStream = tsResult.js.pipe(gulp.dest(tsconfig.compilerOptions.outDir));
 		
-		tsResult.dts.pipe(gulp.dest(tsconfig.compilerOptions.outDir))
+		// A bit nasty
+		dtsDestStream
 		.on('end', function() {
-			console.log('hello');
 			bundleDts();
-			done();
 		});
 		
-		tsResult.js.pipe(gulp.dest(tsconfig.compilerOptions.outDir));
+		return merge(
+			tsDestStream,
+			dtsDestStream,
+			gulp.src('build/to-copy/**/*').pipe(gulp.dest('built'))
+		);
 	});
 
 	gulp.task('package', ['build'], function (done) {
