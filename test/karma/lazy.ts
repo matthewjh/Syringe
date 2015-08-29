@@ -1,5 +1,5 @@
 import 'es6-promise';
-import {Injector, Inject, Token, Lazy, ILazy, bind} from '../src/index';
+import {Injector, Inject, Token, Lazy, ILazy, bind} from '../../src/index';
 
 class OneToken extends Token<number> {}
 class TwoToken extends Token<number> {}

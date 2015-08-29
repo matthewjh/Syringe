@@ -43,7 +43,7 @@ module.exports = function () {
 	});
 
 	gulp.task('build', function (done) {
-		var tsconfig = require("../tsconfig.json");
+		var tsconfig = require('../tsconfig.json');
 		var filesGlob = tsconfig.filesGlob;
 
 		tsconfig.compilerOptions.typescript = require('typescript');

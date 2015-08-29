@@ -1,5 +1,5 @@
 import 'es6-promise'; 
-import {Injector, Token, IToken, Inject, bind} from '../src/index';
+import {Injector, Token, IToken, Inject, bind} from '../../src/index';
 
 class AToken extends Token<A> {}
 class BToken extends Token<B> {}
