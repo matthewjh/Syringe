@@ -58,7 +58,7 @@ module.exports = function () {
 		// A bit nasty
 		dtsDestStream
 		.on('end', function() {
-			bundleDts(path.resolve(paths.builtFolder));
+			bundleDts(path.resolve('built'));
 		});
 		
 		return merge(
