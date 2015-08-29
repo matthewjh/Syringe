@@ -42,7 +42,7 @@ module.exports = function () {
 			.pipe(rimraf());
 	});
 
-	gulp.task('build', function (done) {
+	gulp.task('build', function () {
 		var tsconfig = require('../tsconfig.json');
 		var filesGlob = tsconfig.filesGlob;
 
@@ -50,17 +50,19 @@ module.exports = function () {
 
 		var tsResult = gulp.src(filesGlob)
 			.pipe(ts(tsconfig.compilerOptions));
-
-		return merge([
-			tsResult.dts.pipe(gulp.dest(tsconfig.compilerOptions.outDir)),
-			tsResult.js.pipe(gulp.dest(tsconfig.compilerOptions.outDir))
-		]);
+		
+		tsResult.dts.pipe(gulp.dest(tsconfig.compilerOptions.outDir))
+		.on('end', function() {
+			console.log('hello');
+			bundleDts();
+			done();
+		});
+		
+		tsResult.js.pipe(gulp.dest(tsconfig.compilerOptions.outDir));
 	});
 
 	gulp.task('package', ['build'], function (done) {
 		var b = browserify(config);
-
-		bundleDts();
 
 		return b
 			.bundle()
@@ -75,11 +77,11 @@ module.exports = function () {
 	});
 
 	gulp.task('test', ['build'], function () {
-		runKarmaTests('karma.conf.js');
+		return runKarmaTests('karma.conf.js');
 	});
 
 	gulp.task('test.sauce', ['build'], function () {
-		runKarmaTests('karma-sauce.conf.js');
+		return runKarmaTests('karma-sauce.conf.js');
 	});
 
 	gulp.task('test.tsc', ['build'], require('./gulp-tasks/run-tsc-tests'));
