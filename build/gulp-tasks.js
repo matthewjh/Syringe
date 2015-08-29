@@ -1,6 +1,6 @@
 var gulp = require('gulp');
 var ts = require('gulp-typescript');
-var rimraf = require('gulp-rimraf');
+var rimraf = require('rimraf');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var rename = require('gulp-rename');
@@ -11,12 +11,13 @@ var exec = require('child_process').exec;
 var fs = require('fs');
 var merge = require('merge2');
 var bundleDts = require('./dts-bundle');
+var path = require('path');
 var browserify = require('browserify');
 var config = require('./browserify.conf.js');
 
 var paths = {
 	builtFolder: '../built',
-	distFolder: '../dist'
+	distFolder: 'dist'
 };
 
 module.exports = function () {
@@ -37,39 +38,39 @@ module.exports = function () {
 			});
 	}
 
-	gulp.task('clean-build-folder', function () {
-		return gulp.src(paths.builtFolder + '**/*', { read: false })
-			.pipe(rimraf());
+	gulp.task('clean', function (done) {
+		rimraf('./' + paths.builtFolder, done);
+	});
+	
+	gulp.task('clean-dist', function (done) {
+		rimraf('./' + paths.distFolder, done);
 	});
 
 	gulp.task('build', function () {
 		var tsconfig = require('../tsconfig.json');
-		var filesGlob = tsconfig.filesGlob;
-
 		tsconfig.compilerOptions.typescript = require('typescript');
 		
-		var tsResult = gulp.src(filesGlob)
-			.pipe(ts(tsconfig.compilerOptions));
+		var filesGlob = tsconfig.filesGlob;
+		var tsResult = gulp.src(filesGlob).pipe(ts(tsconfig.compilerOptions));
 		var dtsDestStream = tsResult.dts.pipe(gulp.dest(tsconfig.compilerOptions.outDir));
 		var tsDestStream = tsResult.js.pipe(gulp.dest(tsconfig.compilerOptions.outDir));
 		
 		// A bit nasty
 		dtsDestStream
 		.on('end', function() {
-			bundleDts();
+			bundleDts(path.resolve(paths.builtFolder));
 		});
 		
 		return merge(
 			tsDestStream,
 			dtsDestStream,
-			gulp.src('build/to-copy/**/*').pipe(gulp.dest('built'))
+			gulp.src('build/to-copy/**/*').pipe(gulp.dest(paths.builtFolder))
 		);
 	});
 
 	gulp.task('package', ['build'], function (done) {
 		var b = browserify(config);
-
-		return b
+		var browserifyStream = b
 			.bundle()
 			.pipe(source('syringe.js'))
 			.pipe(buffer())
@@ -79,6 +80,16 @@ module.exports = function () {
 			.pipe(concat.header(fs.readFileSync('./license-comment.txt')))
 			.pipe(rename({ extname: '.min.js' }))
 			.pipe(gulp.dest(paths.distFolder));
+			
+		browserifyStream.on('finish', function() {
+			bundleDts(path.resolve(paths.distFolder));
+		});
+			
+		return merge(
+			browserifyStream,
+			gulp.src(['**/*', 'lazy.d.ts'], { cwd: paths.builtFolder + '/src/' })
+				.pipe(gulp.dest(paths.distFolder))
+		);
 	});
 
 	gulp.task('test', ['build'], function () {

@@ -87,6 +87,7 @@ var NoBoundTokenError = (function (_super) {
 exports.NoBoundTokenError = NoBoundTokenError;
 
 },{}],4:[function(require,module,exports){
+///<reference path="../typings/es6-promise/es6-promise.d.ts"/>
 var injector_1 = require('./injector');
 exports.Injector = injector_1.Injector;
 var token_1 = require('./token');
