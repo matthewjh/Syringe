@@ -23,7 +23,7 @@ module.exports = function () {
 	function runKarmaTests(confFile) {
 		var karma = require('gulp-karma');
 		var testFiles = [
-			'built/test/**/*.js'
+			'built/test/karma/**/*.js'
 		];
 
 		return gulp.src(testFiles)
