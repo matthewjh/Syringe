@@ -1,5 +1,5 @@
 {
-    "diagnostics": [
+ "diagnostics": [
     {
       "message": "Argument of type '(two: any) => number' is not assignable to parameter of type '() => number'.",
       "character": 25,
@@ -49,6 +49,16 @@
       "message": "Argument of type 'typeof B' is not assignable to parameter of type 'IStatic<A>'.\n  Type 'B' is not assignable to type 'A'.\n    Property 'one' is missing in type 'B'.",
       "character": 21,
       "line": 64
+    },
+    {
+      "message": "Argument of type 'typeof DecoratedA' is not assignable to parameter of type 'IStaticWithArgs<DecoratedA, string, {}, {}, {}, {}, {}, {}, {}>'.\n  Types of parameters 'one' and 'dep1' are incompatible.\n    Type 'number' is not assignable to type 'string'.",
+      "character": 30,
+      "line": 76
+    },
+    {
+      "message": "Argument of type 'typeof DecoratedA2' is not assignable to parameter of type 'IStaticThatMaybeHasTokens<any, string, {}, {}, {}, {}, {}, {}, {}>'.\n  Types of parameters 'one' and 'dep1' are incompatible.\n    Type 'number' is not assignable to type 'string'.",
+      "character": 1,
+      "line": 80
     }
   ]
 }

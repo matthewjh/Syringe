@@ -37,11 +37,11 @@ export class TestRunner implements ITestRunner {
 		let formattedExpected = JSON.stringify(result.expected, null, 2);
 		let message = `
 ---------
-Actual Test Result:
+Actual Test Result (${result.actualDiagnosticsCount}):
 ${colors.white(formattedActual)}
 
 ---------
-Expected Test Result:
+Expected Test Result (${result.expectedDiagnosticsCount}):
 ${colors.white(formattedExpected)}
 ---------`;
 		

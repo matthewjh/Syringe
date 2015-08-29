@@ -1,15 +1,17 @@
 ///<reference path="../../../node_modules/typescript/lib/typescript.d.ts"/>
 
 import {ICompiler, Compiler, ICompilerResult} from './compiler';
-import {ModuleKind} from 'typescript';
+import {ModuleKind, ScriptTarget} from 'typescript';
 import * as fs from 'fs';
 
 import deepEqual = require('deep-equal');
 
 export interface ITestResult {
 	isPass: boolean;
-	expected: ICompilerResult,
-	actual: ICompilerResult
+	expected: ICompilerResult;
+	actual: ICompilerResult;
+	expectedDiagnosticsCount: number;
+	actualDiagnosticsCount: number;
 }
 
 export interface ITest {
@@ -26,18 +28,21 @@ export class Test implements ITest {
 	}
 	
 	run(): ITestResult {
-		let compileResult = this._compiler.compile([this.filePath], {
+		let actualResult = this._compiler.compile([this.filePath], {
+			target: ScriptTarget.ES5,
 			module: ModuleKind.CommonJS,
 			experimentalDecorators: true,
 			noEmit: true
 		});
 		let expectedResult = this._getExpectedCompileResult();
-		let isPass = this._isPass(expectedResult, compileResult);
+		let isPass = this._isPass(expectedResult, actualResult);
 		
 		return {
 			isPass: isPass,
 			expected: expectedResult,
-			actual: compileResult
+			actual: actualResult,
+			expectedDiagnosticsCount: expectedResult.diagnostics.length,
+			actualDiagnosticsCount: actualResult.diagnostics.length
 		};
 	}
 	

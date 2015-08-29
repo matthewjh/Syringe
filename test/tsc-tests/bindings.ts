@@ -1,6 +1,6 @@
 ///<reference path="../../built/src/syringe.d.ts"/>
 
-import {Token, bind} from 'syringe.ts';
+import {Token, Inject, bind} from 'syringe.ts';
 
 class OneToken extends Token<number> {}
 class TwoToken extends Token<number> {}
@@ -63,3 +63,31 @@ bind(BToken).toClass(B, StringToken);
 
 // Should fail because B is not A
 bind(AToken).toClass(B);
+
+@Inject(OneToken)
+class DecoratedA {
+  constructor(public one: number) {}
+}
+class DecoratedAToken extends Token<DecoratedA> {}
+// Should pass
+bind(DecoratedAToken).toClass(DecoratedA);
+bind(DecoratedAToken).toClass(DecoratedA, OneToken);
+
+// Should fail -- DecoratedA's ctor's parameter is of type number, not string
+bind(DecoratedAToken).toClass(DecoratedA, StringToken);
+
+// Should fail -- DecoratedA2's ctor's parameter is of type number, not string
+class DecoratedA2Token extends Token<DecoratedA2> {}
+@Inject(StringToken)
+class DecoratedA2 {
+  constructor(public one: number) {}
+}
+
+// Should fail but doesn't
+class DecoratedA3Token extends Token<DecoratedA3> {}
+@Inject(OneToken, StringToken)
+class DecoratedA3 {
+  constructor(public one: number) {}
+}
+
+

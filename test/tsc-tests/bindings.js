@@ -4,6 +4,14 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") return Reflect.decorate(decorators, target, key, desc);
+    switch (arguments.length) {
+        case 2: return decorators.reduceRight(function(o, d) { return (d && d(o)) || o; }, target);
+        case 3: return decorators.reduceRight(function(o, d) { return (d && d(target, key)), void 0; }, void 0);
+        case 4: return decorators.reduceRight(function(o, d) { return (d && d(target, key, o)) || o; }, desc);
+    }
+};
 var syringe_ts_1 = require('syringe.ts');
 var OneToken = (function (_super) {
     __extends(OneToken, _super);
@@ -89,3 +97,58 @@ syringe_ts_1.bind(AToken).toClass(A, StringToken);
 syringe_ts_1.bind(BToken).toClass(B, StringToken);
 // Should fail because B is not A
 syringe_ts_1.bind(AToken).toClass(B);
+var DecoratedA = (function () {
+    function DecoratedA(one) {
+        this.one = one;
+    }
+    DecoratedA = __decorate([
+        syringe_ts_1.Inject(OneToken)
+    ], DecoratedA);
+    return DecoratedA;
+})();
+var DecoratedAToken = (function (_super) {
+    __extends(DecoratedAToken, _super);
+    function DecoratedAToken() {
+        _super.apply(this, arguments);
+    }
+    return DecoratedAToken;
+})(syringe_ts_1.Token);
+// Should pass
+syringe_ts_1.bind(DecoratedAToken).toClass(DecoratedA);
+syringe_ts_1.bind(DecoratedAToken).toClass(DecoratedA, OneToken);
+// Should fail -- DecoratedA's ctor's parameter is of type number, not string
+syringe_ts_1.bind(DecoratedAToken).toClass(DecoratedA, StringToken);
+// Should fail -- DecoratedA2's ctor's parameter is of type number, not string
+var DecoratedA2Token = (function (_super) {
+    __extends(DecoratedA2Token, _super);
+    function DecoratedA2Token() {
+        _super.apply(this, arguments);
+    }
+    return DecoratedA2Token;
+})(syringe_ts_1.Token);
+var DecoratedA2 = (function () {
+    function DecoratedA2(one) {
+        this.one = one;
+    }
+    DecoratedA2 = __decorate([
+        syringe_ts_1.Inject(StringToken)
+    ], DecoratedA2);
+    return DecoratedA2;
+})();
+// Should fail but doesn't
+var DecoratedA3Token = (function (_super) {
+    __extends(DecoratedA3Token, _super);
+    function DecoratedA3Token() {
+        _super.apply(this, arguments);
+    }
+    return DecoratedA3Token;
+})(syringe_ts_1.Token);
+var DecoratedA3 = (function () {
+    function DecoratedA3(one) {
+        this.one = one;
+    }
+    DecoratedA3 = __decorate([
+        syringe_ts_1.Inject(OneToken, StringToken)
+    ], DecoratedA3);
+    return DecoratedA3;
+})();
