@@ -48,15 +48,16 @@ module.exports = function () {
 
 		tsconfig.compilerOptions.typescript = require('typescript');
 		
-		bundleDts();
 
 		var tsResult = gulp.src(filesGlob)
 			.pipe(ts(tsconfig.compilerOptions));
 
-		return merge([
+		merge([
 			tsResult.dts.pipe(gulp.dest(tsconfig.compilerOptions.outDir)),
 			tsResult.js.pipe(gulp.dest(tsconfig.compilerOptions.outDir))
 		]);
+		
+		bundleDts();
 	});
 	
 	gulp.task('package', ['build'], function (done) {
