@@ -37,12 +37,12 @@ module.exports = function () {
 			});
 	}
 
-	gulp.task('clean-build-folder', function (done) {
+	gulp.task('clean-build-folder', function () {
 		return gulp.src(paths.builtFolder + '**/*', { read: false })
 			.pipe(rimraf());
 	});
 
-	gulp.task('build', function () {
+	gulp.task('build', function (done) {
 		var tsconfig = require('../tsconfig.json');
 		var filesGlob = tsconfig.filesGlob;
 
