@@ -64,7 +64,7 @@ module.exports = function () {
 		return merge(
 			tsDestStream,
 			dtsDestStream,
-			gulp.src('build/to-copy/**/*').pipe(gulp.dest(paths.builtFolder))
+			gulp.src('build/to-copy/**/*').pipe(gulp.dest('built'))
 		);
 	});
 
