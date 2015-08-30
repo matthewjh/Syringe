@@ -1,5 +1,5 @@
 {
- "diagnostics": [
+  "diagnostics": [
     {
       "message": "Argument of type '(two: any) => number' is not assignable to parameter of type '() => number'.",
       "character": 25,
@@ -36,23 +36,23 @@
       "line": 49
     },
     {
-      "message": "Argument of type 'typeof A' is not assignable to parameter of type 'IStaticWithArgs<A, string, {}, {}, {}, {}, {}, {}, {}>'.\n  Types of parameters 'one' and 'dep1' are incompatible.\n    Type 'number' is not assignable to type 'string'.",
-      "character": 21,
+      "message": "The type argument for type parameter 'T1' cannot be inferred from the usage. Consider specifying the type arguments explicitly.\n  Type argument candidate 'number' is not a valid type argument because it is not a supertype of candidate 'string'.",
+      "character": 0,
       "line": 58
     },
     {
-      "message": "Argument of type 'typeof B' is not assignable to parameter of type 'IStaticWithArgs<B, string, {}, {}, {}, {}, {}, {}, {}>'.\n  Types of parameters 'a' and 'dep1' are incompatible.\n    Type 'A' is not assignable to type 'string'.",
-      "character": 21,
+      "message": "The type argument for type parameter 'T1' cannot be inferred from the usage. Consider specifying the type arguments explicitly.\n  Type argument candidate 'A' is not a valid type argument because it is not a supertype of candidate 'string'.\n    Property 'one' is missing in type 'String'.",
+      "character": 0,
       "line": 61
     },
     {
-      "message": "Argument of type 'typeof B' is not assignable to parameter of type 'IStatic<A>'.\n  Type 'B' is not assignable to type 'A'.\n    Property 'one' is missing in type 'B'.",
+      "message": "Argument of type 'typeof B' is not assignable to parameter of type 'IStaticThatMaybeHasTokens<A, any, any, any, any, any, any, any, any>'.\n  Type 'B' is not assignable to type 'A'.\n    Property 'one' is missing in type 'B'.",
       "character": 21,
       "line": 64
     },
     {
-      "message": "Argument of type 'typeof DecoratedA' is not assignable to parameter of type 'IStaticWithArgs<DecoratedA, string, {}, {}, {}, {}, {}, {}, {}>'.\n  Types of parameters 'one' and 'dep1' are incompatible.\n    Type 'number' is not assignable to type 'string'.",
-      "character": 30,
+      "message": "The type argument for type parameter 'T1' cannot be inferred from the usage. Consider specifying the type arguments explicitly.\n  Type argument candidate 'number' is not a valid type argument because it is not a supertype of candidate 'string'.",
+      "character": 0,
       "line": 76
     },
     {
