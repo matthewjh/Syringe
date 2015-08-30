@@ -87,7 +87,7 @@ module.exports = function () {
 			
 		return merge(
 			browserifyStream,
-			gulp.src(['**/*', 'lazy.d.ts'], { cwd: paths.builtFolder + '/src/' })
+			gulp.src(['syringe.d.ts'], { cwd: paths.builtFolder + '/src/' })
 				.pipe(gulp.dest(paths.distFolder))
 		);
 	});
