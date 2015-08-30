@@ -1,8 +1,8 @@
 function run() {
-	var oneToken = new syringe.Token.create(),
-		twoToken = new syringe.Token.create(),
-		threeToken = new syringe.Token.create(),
-		fourToken = new syringe.Token.create();
+	var oneToken = syringe.Token.create(),
+		twoToken = syringe.Token.create(),
+		threeToken = syringe.Token.create(),
+		fourToken = syringe.Token.create();
 
 	var bind = syringe.bind;
 	var injector = new syringe.Injector([

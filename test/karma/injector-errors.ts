@@ -1,6 +1,6 @@
 import 'es6-promise';
-import {Injector, Token, Lazy, bind} from '../src/index';
-import {CyclicDependencyError, NoBoundTokenError} from '../src/errors';
+import {Injector, Token, Lazy, bind} from '../../src/index';
+import {CyclicDependencyError, NoBoundTokenError} from '../../src/errors';
 import {envSupportsFunctionName} from './test-helpers'; 
 
 class OneToken extends Token<number> {}
