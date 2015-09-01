@@ -24,18 +24,21 @@ Syringe is a dependency injection library for TypeScript, with a binding syntax 
 ## Installation
 
 `npm install syringe.ts --save-dev`
+`tsd link` (if using tsd)
 
-Syringe is packaged as a UMD module, so it can be used via CommonJS, AMD, or even as a global (`window.syringe`). 
+Syringe is packaged as a UMD module, so it can be loaded via CommonJS, AMD, or even via a global (`window.syringe`). 
 
-Ensure that you include the Syringe API definition file (`node_modules/syringe.ts/dist/syringe.d.ts`) either via reference tags or by including it in the files you're passing to the TypeScript compiler. 
+Ensure that you include the Syringe API definition file (`node_modules/syringe.ts/dist/syringe.d.ts`) either via reference tags or by including it in the files you're passing to the TypeScript compiler.
+
+### Dependencies
+
+Syringe includes the `es6-promise` polyfill, but you must manually include the `es6-promise.d.ts` file in your TypeScript build as per above. The easiest way to obtain this file is to run `tsd install es6-promise --save` if you have tsd installed; if not, download it [here](https://github.com/borisyankov/DefinitelyTyped/blob/master/es6-promise/es6-promise.d.ts).
 
 ## Basic Usage
 
 To begin using Syringe, you need to create an `Injector`. An `Injector` has bindings, which bind `Token`s to a 'recipe' describing how the injector should construct that dependency (e.g. via new'ing up a class, a factory, etc.).
 
 ````typescript
-/// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
-
 import {Injector, Token, bind} from 'syringe.ts';
 
 class OneToken extends Token<number> {}
@@ -58,6 +61,8 @@ In the example above, TypeScript knows that `injector.get(TwoToken)` returns a `
 
 Similarly, if you try to take a string and bind it to `oneValue`, TypeScript will error out. This makes Syringe far more powerful than other TS/JS DI libraries, where calling `injector.get(someTokenOrId)` returns `any`, forcing you to cast an assume that the types will be correct at runtime. It also means that when binding classes or factories, if the parameters to the class constructor or factory change from that of the binding tokens in type or arity, or vice-versa, TypeScript gives an error. 
 
+The same system of type-parametized tokens enables Syringe to correctly handle and type non-class dependencies e.g. interfaces where other frameworks cannot due to their dependency on TypeScript decorator metadata (which don't work for interfaces in particular) and/or class tokens (which, again, don't work with interfaces nor non-class types).
+
 ## Bindings
 
 ### toValue
@@ -65,8 +70,6 @@ Similarly, if you try to take a string and bind it to `oneValue`, TypeScript wil
 The most basic type of binding simply binds a token to a value that has no dependencies.
 
 ````typescript
-/// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
-
 import {Injector, Token, bind} from 'syringe.ts';
 
 class OneToken extends Token<number> {}
@@ -86,8 +89,6 @@ injector.get(OneToken).then(one => {
 This binds a token to the return value of a factory function, which can iteslf specify dependencies. The tokens for the dependencies follow the factory function.
  
 ````typescript
-/// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
-
 import {Injector, Token, bind} from 'syringe.ts';
 
 class HelloToken extends Token<string> {}
@@ -112,8 +113,6 @@ injector.get(HelloWorldToken).then(helloWorld => {
 Thanks to Syringe being asynchronous from the ground up, handling asynchronous dependencies is seamless. `toAsyncFactory` is similar to `toFactory` but takes a factory returning a `Promise`. This means that if you have a `string` dependency whose value is dependent on an async file read or XHR request, that can be done in the async factory and Syringe will simply wait for the promise to resolve prior to constructing dependent values.
 
 ````typescript
-/// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
-
 import {Injector, Token, bind} from 'syringe.ts';
 
 interface ICar {
@@ -156,8 +155,6 @@ This is an extremely powerful feature. It means that your code will no longer ha
 `toClass` creates a binding between a token and a class, meaning that the dependency will be created by constructing a new instance of that class. The class's dependencies will be passed into its constructor.
 
 ````typescript
-/// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
-
 import {Injector, Token, bind} from 'syringe.ts';
 
 interface ILog {
@@ -195,8 +192,6 @@ injector.get(LogToken).then(log => {
 You can also specify a class's dependency tokens by decorating it with `Inject`. Note that this requires that the decorators flag (`--experimentalDecorators`) be passed to the TypeScript compiler and that you target at least ES5 (`--target es5`):
 
 ````typescript
-/// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
-
 import {Injector, Inject, Token, bind} from 'syringe.ts';
 
 interface ILog {
@@ -238,8 +233,6 @@ Note that if Syringe has a class dependency that is both decorated with `Inject`
 You can create `Injector` hierarchies by passing in a parent `Injector` when creating a new `Injector`:
 
 ````typescript
-/// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
-
 import {Injector, Token, bind} from 'syringe.ts';
 
 class OneToken extends Token<number> {}
@@ -268,8 +261,6 @@ Sometimes it is desirable to construct a dependency in a context after that cont
 This can sometimes be useful to avoid cyclic dependency errors, if you know that a dependency is not needed until sometime after the injector has created other dependencies:
 
 ````typescript
-/// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
-
 import {Injector, Inject, Token, bind} from 'syringe.ts';
 
 class AToken extends Token<A> {}
@@ -317,8 +308,6 @@ but, if we know that we don't need a reference to B prior to calling `A#foo`, we
 Note that this means that the client code has to handle the asynchrony usually handled by the injector behind the scenes.
 
 ````typescript
-/// <reference path="./node_modules/syringe.ts/dist/syringe.d.ts"/>
-
 import {Injector, Inject, Token, Lazy, ILazy, bind} from 'syringe.ts';
 
 class AToken extends Token<A> {}
