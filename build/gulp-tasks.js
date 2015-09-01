@@ -68,7 +68,7 @@ module.exports = function () {
 		);
 	});
 
-	gulp.task('package', ['build'], function (done) {
+	gulp.task('package', ['build', 'clean-dist'], function (done) {
 		var b = browserify(config);
 		var browserifyStream = b
 			.bundle()
@@ -87,8 +87,7 @@ module.exports = function () {
 			
 		return merge(
 			browserifyStream,
-			gulp.src(['syringe.d.ts'], { cwd: paths.builtFolder + '/src/' })
-				.pipe(gulp.dest(paths.distFolder))
+			gulp.src('build/to-copy/src/syringe.d.ts').pipe(gulp.dest('dist'))
 		);
 	});
 
