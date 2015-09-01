@@ -15,6 +15,7 @@
   ],
   "main": "dist/syringe.js",
   "scripts": {
+    "preversion": "gulp test && gulp test.tsc && gulp package && git add -A dist",
     "test": "gulp test.sauce && gulp test.tsc"
   },
   "repository": {
