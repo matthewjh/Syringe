@@ -42,6 +42,7 @@ To begin using Syringe, you need to create an `Injector`. An `Injector` has bind
 ````typescript
 import {Injector, Token, bind} from 'syringe.ts';
 
+// In a real-world app, you'd export your tokens from many files and import them here to create the Injector
 class OneToken extends Token<number> {}
 class TwoToken extends Token<number> {}
 
