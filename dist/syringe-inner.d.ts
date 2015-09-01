@@ -51,28 +51,38 @@ declare module '__syringe.ts/decorators' {
     export interface IInjectDecorator<T1, T2, T3, T4, T5, T6, T7, T8> {
         (Class: IStaticThatMaybeHasTokens<any, T1, T2, T3, T4, T5, T6, T7, T8>): IStaticThatMaybeHasTokens<any, T1, T2, T3, T4, T5, T6, T7, T8>;
     }
-    export function Inject<T1, T2, T3, T4, T5, T6, T7, T8>(token1?: IToken<T1>, token2?: IToken<T2>, token3?: IToken<T3>, token4?: IToken<T4>, token5?: IToken<T5>, token6?: IToken<T6>, token7?: IToken<T7>, token8?: IToken<T8>): IInjectDecorator<T1, T2, T3, T4, T5, T6, T7, T8>;
+    export function Inject(): IInjectDecorator<{}, {}, {}, {}, {}, {}, {}, {}>;
+    export function Inject<T1>(token1: IToken<T1>): IInjectDecorator<T1, {}, {}, {}, {}, {}, {}, {}>;
+    export function Inject<T1, T2>(token1: IToken<T1>, token2: IToken<T2>): IInjectDecorator<T1, T2, {}, {}, {}, {}, {}, {}>;
+    export function Inject<T1, T2, T3>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>): IInjectDecorator<T1, T2, T3, {}, {}, {}, {}, {}>;
+    export function Inject<T1, T2, T3, T4>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>): IInjectDecorator<T1, T2, T3, T4, {}, {}, {}, {}>;
+    export function Inject<T1, T2, T3, T4, T5>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>): IInjectDecorator<T1, T2, T3, T4, T5, {}, {}, {}>;
+    export function Inject<T1, T2, T3, T4, T5, T6>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>): IInjectDecorator<T1, T2, T3, T4, T5, T6, {}, {}>;
+    export function Inject<T1, T2, T3, T4, T5, T6, T7, T8>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>, token7: IToken<T7>, token8: IToken<T8>): IInjectDecorator<T1, T2, T3, T4, T5, T6, T7, T8>;
+    export function Inject<T1, T2, T3, T4, T5, T6, T7>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>, token7: IToken<T7>): IInjectDecorator<T1, T2, T3, T4, T5, T6, T7, {}>;
 }
 
 declare module '__syringe.ts/binding' {
     import { IToken } from '__syringe.ts/token';
     import { IProvider } from '__syringe.ts/provider/facade';
-    import { IStaticWithArgs, IStatic } from '__syringe.ts/shared-interfaces';
+    import { IStaticThatMaybeHasTokens } from '__syringe.ts/decorators';
+    import { IStaticWithNoArgs, IStaticWith1Arg, IStaticWith2Args, IStaticWith3Args, IStaticWith4Args, IStaticWith5Args, IStaticWith6Args, IStaticWith7Args, IStaticWith8Args } from '__syringe.ts/shared-interfaces';
     export interface IBinding<T> {
         token: IToken<T>;
         provider: IProvider<T>;
     }
     export interface IUnprovidedBinding<T> {
         toValue(value: T): IBinding<T>;
-        toClass(Class: IStatic<T>): IBinding<T>;
-        toClass<T1>(Class: IStaticWithArgs<T, T1, {}, {}, {}, {}, {}, {}, {}>, token1: IToken<T1>): IBinding<T>;
-        toClass<T1, T2>(Class: IStaticWithArgs<T, T1, T2, {}, {}, {}, {}, {}, {}>, token1: IToken<T1>, token2: IToken<T2>): IBinding<T>;
-        toClass<T1, T2, T3>(Class: IStaticWithArgs<T, T1, T2, T3, {}, {}, {}, {}, {}>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>): IBinding<T>;
-        toClass<T1, T2, T3, T4>(Class: IStaticWithArgs<T, T1, T2, T3, T4, {}, {}, {}, {}>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>): IBinding<T>;
-        toClass<T1, T2, T3, T4, T5>(Class: IStaticWithArgs<T, T1, T2, T3, T4, T5, {}, {}, {}>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>): IBinding<T>;
-        toClass<T1, T2, T3, T4, T5, T6>(Class: IStaticWithArgs<T, T1, T2, T3, T4, T5, T6, {}, {}>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>): IBinding<T>;
-        toClass<T1, T2, T3, T4, T5, T6, T7>(Class: IStaticWithArgs<T, T1, T2, T3, T4, T5, T6, T7, {}>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>, token7: IToken<T7>): IBinding<T>;
-        toClass<T1, T2, T3, T4, T5, T6, T7, T8>(Class: IStaticWithArgs<T, T1, T2, T3, T4, T5, T6, T7, T8>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>, token7: IToken<T7>, token8: IToken<T8>): IBinding<T>;
+        toClass(Class: IStaticWithNoArgs<T>): IBinding<T>;
+        toClass(Class: IStaticThatMaybeHasTokens<T, any, any, any, any, any, any, any, any>): IBinding<T>;
+        toClass<T1>(Class: IStaticWith1Arg<T, T1>, token1: IToken<T1>): IBinding<T>;
+        toClass<T1, T2>(Class: IStaticWith2Args<T, T1, T2>, token1: IToken<T1>, token2: IToken<T2>): IBinding<T>;
+        toClass<T1, T2, T3>(Class: IStaticWith3Args<T, T1, T2, T3>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>): IBinding<T>;
+        toClass<T1, T2, T3, T4>(Class: IStaticWith4Args<T, T1, T2, T3, T4>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>): IBinding<T>;
+        toClass<T1, T2, T3, T4, T5>(Class: IStaticWith5Args<T, T1, T2, T3, T4, T5>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>): IBinding<T>;
+        toClass<T1, T2, T3, T4, T5, T6>(Class: IStaticWith6Args<T, T1, T2, T3, T4, T5, T6>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>): IBinding<T>;
+        toClass<T1, T2, T3, T4, T5, T6, T7>(Class: IStaticWith7Args<T, T1, T2, T3, T4, T5, T6, T7>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>, token7: IToken<T7>): IBinding<T>;
+        toClass<T1, T2, T3, T4, T5, T6, T7, T8>(Class: IStaticWith8Args<T, T1, T2, T3, T4, T5, T6, T7, T8>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>, token7: IToken<T7>, token8: IToken<T8>): IBinding<T>;
         toFactory(factory: () => T): IBinding<T>;
         toFactory<T1>(factory: (dep1: T1) => T, token1: IToken<T1>): IBinding<T>;
         toFactory<T1, T2>(factory: (dep1: T1, dep2: T2) => T, token1: IToken<T1>, token2: IToken<T2>): IBinding<T>;
@@ -98,6 +108,33 @@ declare module '__syringe.ts/binding' {
 declare module '__syringe.ts/shared-interfaces' {
     export interface IStatic<T> {
         new (...args: any[]): T;
+    }
+    export interface IStaticWithNoArgs<T> {
+        new (): T;
+    }
+    export interface IStaticWith1Arg<T, T1> {
+        new (dep1: T1): T;
+    }
+    export interface IStaticWith2Args<T, T1, T2> {
+        new (dep1: T1, dep2: T2): T;
+    }
+    export interface IStaticWith3Args<T, T1, T2, T3> {
+        new (dep1: T1, dep2: T2, dep3: T3): T;
+    }
+    export interface IStaticWith4Args<T, T1, T2, T3, T4> {
+        new (dep1: T1, dep2: T2, dep3: T3, dep4: T4): T;
+    }
+    export interface IStaticWith5Args<T, T1, T2, T3, T4, T5> {
+        new (dep1: T1, dep2: T2, dep3: T3, dep4: T4, dep5: T5): T;
+    }
+    export interface IStaticWith6Args<T, T1, T2, T3, T4, T5, T6> {
+        new (dep1: T1, dep2: T2, dep3: T3, dep4: T4, dep5: T5, dep6: T6): T;
+    }
+    export interface IStaticWith7Args<T, T1, T2, T3, T4, T5, T6, T7> {
+        new (dep1: T1, dep2: T2, dep3: T3, dep4: T4, dep5: T5, dep6: T6, dep7: T7): T;
+    }
+    export interface IStaticWith8Args<T, T1, T2, T3, T4, T5, T6, T7, T8> {
+        new (dep1: T1, dep2: T2, dep3: T3, dep4: T4, dep5: T5, dep6: T6, dep7: T7, dep8: T8): T;
     }
     export interface IStaticWithArgs<T, T1, T2, T3, T4, T5, T6, T7, T8> extends IStatic<T> {
         new (dep1: T1, dep2: T2, dep3: T3, dep4: T4, dep5: T5, dep6: T6, dep7: T7, dep8: T8): T;

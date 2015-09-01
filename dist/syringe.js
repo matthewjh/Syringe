@@ -48,11 +48,15 @@ function bind(token) {
 exports.bind = bind;
 
 },{"./provider/facade":9}],2:[function(require,module,exports){
-function Inject(token1, token2, token3, token4, token5, token6, token7, token8) {
+function Inject() {
+    var tokens = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        tokens[_i - 0] = arguments[_i];
+    }
     return function (Class) {
         Object.defineProperty(Class, '___tokens', {
             enumerable: false,
-            value: [token1, token2, token3, token4, token5, token6, token7, token8].filter(function (t) { return t != null; })
+            value: tokens
         });
         return Class;
     };

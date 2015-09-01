@@ -93,7 +93,7 @@ syringe_ts_1.bind(AToken).toClass(A);
 syringe_ts_1.bind(AToken).toClass(A, OneToken);
 // Should fail -- A's ctor's parameter is of type number, not string
 syringe_ts_1.bind(AToken).toClass(A, StringToken);
-// Should fail -- A's ctor's parameter is of type number, not string
+// Should fail -- B's ctor's parameter is of type number, not string
 syringe_ts_1.bind(BToken).toClass(B, StringToken);
 // Should fail because B is not A
 syringe_ts_1.bind(AToken).toClass(B);

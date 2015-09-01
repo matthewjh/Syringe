@@ -15,7 +15,7 @@
   ],
   "main": "dist/syringe.js",
   "scripts": {
-    "test": "$(npm bin)/gulp test.sauce && $(npm bin)/gulp test.tsc"
+    "test": "gulp test.sauce && gulp test.tsc"
   },
   "repository": {
     "type": "git",

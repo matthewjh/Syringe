@@ -58,7 +58,7 @@ bind(AToken).toClass(A, OneToken);
 // Should fail -- A's ctor's parameter is of type number, not string
 bind(AToken).toClass(A, StringToken);
 
-// Should fail -- A's ctor's parameter is of type number, not string
+// Should fail -- B's ctor's parameter is of type number, not string
 bind(BToken).toClass(B, StringToken);
 
 // Should fail because B is not A
