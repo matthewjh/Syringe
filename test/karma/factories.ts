@@ -1,10 +1,10 @@
-import 'es6-promise';
 import {Injector, Token, Inject, bind} from '../../src/index';
 
 class OneToken extends Token<number> {}
 class TwoToken extends Token<number> {}
 class ThreeToken extends Token<number> {}
 class ConcatenatedNumbersToken extends Token<string> {}
+class OnePromiseToken extends Token<Promise<number>> {}
 
 describe('injector with factory bindings', () => {  
   it('should correctly resolve values from tokens via sync factories', (done) => {
@@ -32,6 +32,20 @@ describe('injector with factory bindings', () => {
       expect(concatenatedNumbers).toEqual('123');
       
       done();
+    });
+  });
+  
+  it('should correctly resolve promise values via sync factories', (done) => {
+    let injector = new Injector([
+      bind(OnePromiseToken).toFactory(() => Promise.resolve(1))
+    ]);
+    
+    injector.get(OnePromiseToken).then(onePromise => {
+      expect(onePromise).toEqual(jasmine.any(Promise));
+      onePromise.then(one => {
+        expect(one).toBe(1);
+        done();
+      });
     });
   });
   

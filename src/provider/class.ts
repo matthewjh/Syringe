@@ -19,7 +19,7 @@ export class ClassProvider<T> implements IProvider<T> {
         this.dependencyTokens = Class.___tokens;
       }
     }
-
+    
     this._Class = Class;
   }
   
