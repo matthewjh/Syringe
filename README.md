@@ -41,7 +41,7 @@ Syringe is packaged as a UMD module, so it can be loaded via CommonJS, AMD, or e
 
 To begin using Syringe, you need to create an `Injector`. An `Injector` has bindings, which bind `Token`s to a 'recipe' describing how the injector should construct that dependency (e.g. via new'ing up a class, a factory, etc.).
 
-test.ts
+`test.ts`
 ````typescript
 import {Injector, Token, bind} from 'syringe.ts';
 
