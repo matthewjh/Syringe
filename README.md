@@ -61,7 +61,9 @@ injector.get(TwoToken).then(two => {
 ````
 
 To compile and run:
-`tsc test.ts typings/tsd.d.ts --module commonjs`
+````
+tsc test.ts typings/tsd.d.ts --module commonjs
+````
 `node test.js` => prints 2
  
 ## Type-safe? How so?
