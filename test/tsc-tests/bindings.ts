@@ -1,5 +1,5 @@
 ///<reference path="../../built/src/syringe.d.ts"/>
-///<reference path="../../typings/es6-promise/es6-promise.d.ts"/>
+///<reference path="../../typings/tsd.d.ts"/>
 
 import {Token, Inject, bind} from 'syringe.ts';
 

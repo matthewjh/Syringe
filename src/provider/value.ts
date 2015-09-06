@@ -1,5 +1,3 @@
-import 'es6-promise';
-
 import {IToken} from '../token';
 import {IProvider} from './abstract';
 
