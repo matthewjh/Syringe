@@ -1,7 +1,5 @@
-import 'es6-promise';
 import {IndexedProvider} from './provider/facade';
 import {CyclicDependencyError, NoBoundTokenError} from './errors';
-
 import {bind, IBinding} from './binding';
 import {IToken} from './token';
 import {Lazy} from './lazy';
