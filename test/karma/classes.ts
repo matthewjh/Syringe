@@ -61,7 +61,7 @@ describe('injector with class bindings', () => {
     ];
     
     let injector = new Injector(bindings);
-    
+  
     Promise.all(<Promise<any>[]>[
       injector.get(AToken),
       injector.get(BToken)
