@@ -31,9 +31,15 @@ Declarative binding syntax                                        | ✓
 ## Installation
 
 ````npm install -g tsd```` (if you don't already have `tsd`)
-````npm install syringe.ts --save-dev````
-````tsd link````
-````tsd install es6-promise --save````
+````
+npm install syringe.ts --save-dev
+````
+````
+tsd link
+````
+````
+tsd install es6-promise --save
+````
 
 Syringe is packaged as a UMD module, so it can be loaded via CommonJS, AMD, or even via a global (`window.syringe`). 
 
