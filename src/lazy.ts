@@ -11,4 +11,3 @@ export function Lazy<T>(token: IToken<T>): IToken<ILazy<T>> {
 	
 	return token['___lazyToken'];
 }
-
