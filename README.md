@@ -11,7 +11,7 @@ Asynchronous dependencies                                         | ✓
 Type safety and static analysis via typed tokens                  | ✓                 
 Can express dependencies of any type, including TS interfaces     | ✓                 
 Declarative binding syntax                                        | ✓                 
-
+  
 ##Table of Contents
 
 - [Syringe](#)
@@ -30,22 +30,18 @@ Declarative binding syntax                                        | ✓
 
 ## Installation
 
+`npm install -g tsd` (if you don't already have `tsd`)
 `npm install syringe.ts --save-dev`
-
-`tsd link` (if using tsd)
+`tsd link`
+`tsd install es6-promise --save`
 
 Syringe is packaged as a UMD module, so it can be loaded via CommonJS, AMD, or even via a global (`window.syringe`). 
-
-Ensure that you include the Syringe API definition file (`node_modules/syringe.ts/dist/syringe.d.ts`) either via reference tags or by including it in the files you're passing to the TypeScript compiler.
-
-### Dependencies
-
-Syringe includes the `es6-promise` polyfill, but you must manually include the `es6-promise.d.ts` file in your TypeScript build as per above. The easiest way to obtain this file is to run `tsd install es6-promise --save` if you have tsd installed; if not, download it [here](https://github.com/borisyankov/DefinitelyTyped/blob/master/es6-promise/es6-promise.d.ts).
 
 ## Basic Usage
 
 To begin using Syringe, you need to create an `Injector`. An `Injector` has bindings, which bind `Token`s to a 'recipe' describing how the injector should construct that dependency (e.g. via new'ing up a class, a factory, etc.).
 
+test.ts
 ````typescript
 import {Injector, Token, bind} from 'syringe.ts';
 
@@ -60,15 +56,19 @@ let injector = new Injector([
 ]);
 
 injector.get(TwoToken).then(two => {
-  expect(two).toBe(2); 
+  console.log(two); // logs 2
 });
 ````
+
+To compile and run:
+`tsc test.ts typings/tsd.d.ts --module commonjs`
+`node test.js` => prints 2
  
 ## Type-safe? How so?
 
 In the example above, TypeScript knows that `injector.get(TwoToken)` returns a `Promise<number>`, because the type of the dependency represented by `TwoToken` is known to be `number`. 
 
-Similarly, if you try to take a string and bind it to `oneValue`, TypeScript will error out. This makes Syringe far more powerful than other TS/JS DI libraries, where calling `injector.get(someTokenOrId)` returns `any`, forcing you to cast an assume that the types will be correct at runtime. It also means that when binding classes or factories, if the parameters to the class constructor or factory change from that of the binding tokens in type or arity, or vice-versa, TypeScript gives an error. 
+Similarly, if you try to take a string and bind it to `OneToken`, TypeScript will error out. This makes Syringe far more powerful than other TS/JS DI libraries, where calling `injector.get(someTokenOrId)` returns `any`, forcing you to cast an assume that the types will be correct at runtime. It also means that when binding classes or factories, if the parameters to the class constructor or factory change from that of the binding tokens in type or arity, or vice-versa, TypeScript gives an error. 
 
 The same system of type-parametized tokens enables Syringe to correctly handle and type non-class dependencies e.g. interfaces where other frameworks cannot due to their dependency on TypeScript decorator metadata (which don't work for interfaces in particular) and/or class tokens (which, again, don't work with interfaces nor non-class types).
 
