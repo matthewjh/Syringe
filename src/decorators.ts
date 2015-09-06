@@ -20,6 +20,10 @@ export function Inject<T1, T2, T3, T4, T5, T6>(token1: IToken<T1>, token2: IToke
 export function Inject<T1, T2, T3, T4, T5, T6, T7>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>, token7: IToken<T7>): IInjectDecorator<T1, T2, T3, T4, T5, T6, T7, {}>;
 export function Inject<T1, T2, T3, T4, T5, T6, T7, T8>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>, token7: IToken<T7>, token8: IToken<T8>): IInjectDecorator<T1, T2, T3, T4, T5, T6, T7, T8>;
 
+/**
+ * Decorate a class with tokens
+ * @param {...IToken<any>[]} tokens The tokens to decorate the class with.
+ */
 export function Inject(...tokens: IToken<any>[]): IInjectDecorator<any, any, any, any, any, any, any, any> {
   return (Class: IStaticThatMaybeHasTokens<any, any, any, any, any, any, any, any, any>) => {
     
