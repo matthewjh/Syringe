@@ -35,9 +35,9 @@ export class Injector implements IInjector {
     this._providers = [];
     this._cache = [];
     this._parent = parent;
-   
+
     this._ingestBindings([
-      bindings, 
+      bindings,
       this._getLazyBindings(bindings)
     ]);
   }
@@ -48,7 +48,7 @@ export class Injector implements IInjector {
    */
   public get<T>(token: IToken<T>): Promise<T> {
     let index = this._getIndexForToken(token);
-    
+
     if (index !== -1) {
       return this._getByIndex(index);
     } else {
@@ -60,13 +60,13 @@ export class Injector implements IInjector {
    * Consult the injector's parent for a token if there is one, otherwise throw an exception.
    */
   private _getFromParent<T>(token: IToken<T>): Promise<T> {
-     if (this._parent) {
-        return this._parent.get(token);
-      } else {
-        let error = new NoBoundTokenError(token);
-        
-        return Promise.reject(error); 
-      }
+    if (this._parent) {
+      return this._parent.get(token);
+    } else {
+      let error = new NoBoundTokenError(token);
+
+      return Promise.reject(error);
+    }
   }
   
   /**
@@ -74,12 +74,12 @@ export class Injector implements IInjector {
    */
   private _getByIndex<T>(index: number, indexLog: IIndexLog = [], tokenChain: IToken<any>[] = []): Promise<T> {
     let promise = this._cache[index];
-    
+
     if (!promise) {
       promise = this._getByIndexLookup(index, indexLog, tokenChain);
       this._cache[index] = promise;
     }
-    
+
     return promise;
   }
   
@@ -93,27 +93,27 @@ export class Injector implements IInjector {
     tokenChain.push(token);
     this._detectCycle(index, indexLog, tokenChain);
     indexLog[index] = true;
-   
+
     let dependencyPromises = provider.dependencyIndices.map((depIndex, i) => {
       let maybeDecorating = depIndex === index;
-      
+
       if (depIndex === -1 || maybeDecorating) {
         let token = provider.dependencyTokens[i];
-        
+
         return this._getFromParent(token);
       } else {
         let clonedIndexLog = indexLog.slice();
         let clonedTokenChain = tokenChain.slice();
-        
+
         return this._getByIndex(depIndex, clonedIndexLog, tokenChain);
       }
     });
-    
+
     return Promise.all(dependencyPromises).then(dependencies => {
       return provider.get(dependencies);
     });
   }
-  
+
   private _getIndexForToken(token: IToken<any>): number {
     return this._tokens.indexOf(token);
   }
@@ -123,7 +123,7 @@ export class Injector implements IInjector {
    */
   private _ingestBindings(bindings: IBinding<any>[][]): void {
     let allBindings = [].concat(...bindings);
-     
+
     this._tokens = allBindings.map(b => b.token);
     this._providers = allBindings.map(b => {
       return new IndexedProvider(b.provider, token => this._getIndexForToken(token))

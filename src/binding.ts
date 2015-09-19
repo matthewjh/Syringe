@@ -2,17 +2,17 @@ import {IToken} from './token';
 import {IProvider, ValueProvider, FactoryProvider, AsyncFactoryProvider, ClassProvider} from './provider/facade';
 import {IStaticThatMaybeHasTokens} from './decorators';
 import {
-  IStaticWithNoArgs,
-  IStaticWith1Arg,
-  IStaticWith2Args,
-  IStaticWith3Args,
-  IStaticWith4Args,
-  IStaticWith5Args,
-  IStaticWith6Args,
-  IStaticWith7Args,
-  IStaticWith8Args,
-  IStaticWithArgs, 
-  IStatic
+IStaticWithNoArgs,
+IStaticWith1Arg,
+IStaticWith2Args,
+IStaticWith3Args,
+IStaticWith4Args,
+IStaticWith5Args,
+IStaticWith6Args,
+IStaticWith7Args,
+IStaticWith8Args,
+IStaticWithArgs,
+IStatic
 } from './shared-interfaces';
 
 export interface IBinding<T> {
@@ -61,7 +61,7 @@ export interface IUnprovidedBinding<T> {
 class Binding<T> implements IBinding<T> {
   public token: IToken<T>;
   public provider: IProvider<T>;
-  
+
   constructor(token: IToken<T>, provider: IProvider<T>) {
     this.token = token;
     this.provider = provider;
