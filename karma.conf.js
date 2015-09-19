@@ -10,11 +10,11 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'built/test/karma/**/*'
+      'built/test/jasmine/**/*'
     ],
     
     preprocessors: {
-      'built/test/karma/**/*': [ 'browserify' ],
+      'built/test/jasmine/**/*': [ 'browserify' ],
       'built/src/**/*': [ 'browserify' ],
     },
     
