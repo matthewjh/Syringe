@@ -97,19 +97,4 @@ describe('injector with factory bindings', () => {
       done();
     });
   });
-  
-  it(`should allow 'decoration' of a value in a parent injector`, (done) => {
-    let parent = new Injector([
-      bind(OneToken).toValue(1)
-    ]);
-    
-    let injector = new Injector([
-      bind(OneToken).toFactory(parentOne => parentOne + 1, OneToken)
-    ], parent);
-    
-    injector.get(OneToken).then(oneValue => {
-      expect(oneValue).toEqual(2);
-      done();
-    });
-  });
 });
