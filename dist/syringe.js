@@ -5,6 +5,9 @@
 *            See https://github.com/matthewjh/Syringe/blob/master/LICENSE
 */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.syringe = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var facade_1 = require('./provider/facade');
+/**
+ * A binding between a token and a provider.
+ */
 var Binding = (function () {
     function Binding(token, provider) {
         this.token = token;
@@ -12,13 +15,29 @@ var Binding = (function () {
     }
     return Binding;
 })();
+/**
+ * An unprovided binding is a binding that has a token but no provider.
+ */
 var UnprovidedBinding = (function () {
+    /**
+     * @constructor
+     * @param {IToken<T>} token Token to bind
+     */
     function UnprovidedBinding(token) {
         this._token = token;
     }
+    /**
+     * Bind the token to a value.
+     * @param {T} value Value to bind to the token
+     */
     UnprovidedBinding.prototype.toValue = function (value) {
         return new Binding(this._token, new facade_1.ValueProvider(value));
     };
+    /**
+     * Bind the token to a factory.
+     * @param {Function} factory Factory function that returns the value for the token
+     * @param {...IToken<any>[]} [dependencyTokens] Tokens to inject into the factory function
+     */
     UnprovidedBinding.prototype.toFactory = function (factory) {
         var dependencyTokens = [];
         for (var _i = 1; _i < arguments.length; _i++) {
@@ -26,6 +45,11 @@ var UnprovidedBinding = (function () {
         }
         return new Binding(this._token, new facade_1.FactoryProvider(factory, dependencyTokens));
     };
+    /**
+     * Bind the token to an asynchronous factory.
+     * @param {Function} factory Factory function that returns the Promise for the value for the token
+     * @param {...IToken<any>[]} dependencyTokens Tokens to inject into the factory function
+     */
     UnprovidedBinding.prototype.toAsyncFactory = function (factory) {
         var dependencyTokens = [];
         for (var _i = 1; _i < arguments.length; _i++) {
@@ -33,6 +57,11 @@ var UnprovidedBinding = (function () {
         }
         return new Binding(this._token, new facade_1.AsyncFactoryProvider(factory, dependencyTokens));
     };
+    /**
+     * Bind the token to a class.
+     * @param {Class} Class Class to new up when resolving the token
+     * @param {...IToken<any>[]} dependencyTokens Tokens to inject into the constructor
+     */
     UnprovidedBinding.prototype.toClass = function (Class) {
         var dependencyTokens = [];
         for (var _i = 1; _i < arguments.length; _i++) {
@@ -42,12 +71,20 @@ var UnprovidedBinding = (function () {
     };
     return UnprovidedBinding;
 })();
+/**
+ * Start binding a token.
+ * @param {IToken<T>} token The token to bind
+ */
 function bind(token) {
     return new UnprovidedBinding(token);
 }
 exports.bind = bind;
 
 },{"./provider/facade":9}],2:[function(require,module,exports){
+/**
+ * Decorate a class with tokens
+ * @param {...IToken<any>[]} tokens The tokens to decorate the class with.
+ */
 function Inject() {
     var tokens = [];
     for (var _i = 0; _i < arguments.length; _i++) {
@@ -69,6 +106,9 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+/**
+ * Error thrown a dependency cycle is detected at runtime.
+ */
 var CyclicDependencyError = (function (_super) {
     __extends(CyclicDependencyError, _super);
     function CyclicDependencyError(tokenChain) {
@@ -79,6 +119,9 @@ var CyclicDependencyError = (function (_super) {
     return CyclicDependencyError;
 })(Error);
 exports.CyclicDependencyError = CyclicDependencyError;
+/**
+ * Error thrown when attempting to call Injector#get(token) where token is not bound on the injector.
+ */
 var NoBoundTokenError = (function (_super) {
     __extends(NoBoundTokenError, _super);
     function NoBoundTokenError(token) {
@@ -91,7 +134,7 @@ var NoBoundTokenError = (function (_super) {
 exports.NoBoundTokenError = NoBoundTokenError;
 
 },{}],4:[function(require,module,exports){
-///<reference path="../typings/es6-promise/es6-promise.d.ts"/>
+require('es6-promise');
 var injector_1 = require('./injector');
 exports.Injector = injector_1.Injector;
 var token_1 = require('./token');
@@ -103,29 +146,46 @@ exports.Inject = decorators_1.Inject;
 var binding_1 = require('./binding');
 exports.bind = binding_1.bind;
 
-},{"./binding":1,"./decorators":2,"./injector":5,"./lazy":6,"./token":13}],5:[function(require,module,exports){
-require('es6-promise');
+},{"./binding":1,"./decorators":2,"./injector":5,"./lazy":6,"./token":13,"es6-promise":15}],5:[function(require,module,exports){
 var facade_1 = require('./provider/facade');
 var errors_1 = require('./errors');
 var binding_1 = require('./binding');
 var lazy_1 = require('./lazy');
+/**
+ * An Injector resolves tokens to values via bindings.
+ */
 var Injector = (function () {
+    /**
+     * @constructor
+     * @param {IBinding<any>[]} bindings The array of bindings to load onto the injector
+     * @param {IInjector} [parent] A parent for this injector, which will be delegated to for any tokens unbound on this injector
+     */
     function Injector(bindings, parent) {
         this._tokens = [];
         this._providers = [];
         this._cache = [];
         this._parent = parent;
-        this._ingestBindings(bindings, this._getLazyBindings(bindings));
+        this._ingestBindings([
+            bindings,
+            this._getLazyBindings(bindings)
+        ]);
     }
+    /**
+     * Resolves a token to a Promise for a value.
+     * @param {IToken<T>} token Token to get
+     */
     Injector.prototype.get = function (token) {
         var index = this._getIndexForToken(token);
         if (index !== -1) {
-            return this._getByIndex(index, [], []);
+            return this._getByIndex(index);
         }
         else {
             return this._getFromParent(token);
         }
     };
+    /**
+     * Consult the injector's parent for a token if there is one, otherwise throw an exception.
+     */
     Injector.prototype._getFromParent = function (token) {
         if (this._parent) {
             return this._parent.get(token);
@@ -135,7 +195,12 @@ var Injector = (function () {
             return Promise.reject(error);
         }
     };
+    /**
+     * Get a Promise for a value by its index, consulting the cache first.
+     */
     Injector.prototype._getByIndex = function (index, indexLog, tokenChain) {
+        if (indexLog === void 0) { indexLog = []; }
+        if (tokenChain === void 0) { tokenChain = []; }
         var promise = this._cache[index];
         if (!promise) {
             promise = this._getByIndexLookup(index, indexLog, tokenChain);
@@ -143,6 +208,9 @@ var Injector = (function () {
         }
         return promise;
     };
+    /**
+     * Get a Promise for a value by its index.
+     */
     Injector.prototype._getByIndexLookup = function (index, indexLog, tokenChain) {
         var _this = this;
         var token = this._tokens[index];
@@ -151,7 +219,8 @@ var Injector = (function () {
         this._detectCycle(index, indexLog, tokenChain);
         indexLog[index] = true;
         var dependencyPromises = provider.dependencyIndices.map(function (depIndex, i) {
-            if (depIndex === -1) {
+            var maybeDecorating = depIndex === index;
+            if (depIndex === -1 || maybeDecorating) {
                 var token_1 = provider.dependencyTokens[i];
                 return _this._getFromParent(token_1);
             }
@@ -168,12 +237,11 @@ var Injector = (function () {
     Injector.prototype._getIndexForToken = function (token) {
         return this._tokens.indexOf(token);
     };
-    Injector.prototype._ingestBindings = function () {
+    /**
+     * Install and index a collection of bindings.
+     */
+    Injector.prototype._ingestBindings = function (bindings) {
         var _this = this;
-        var bindings = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            bindings[_i - 0] = arguments[_i];
-        }
         var allBindings = (_a = []).concat.apply(_a, bindings);
         this._tokens = allBindings.map(function (b) { return b.token; });
         this._providers = allBindings.map(function (b) {
@@ -181,6 +249,9 @@ var Injector = (function () {
         });
         var _a;
     };
+    /**
+     * Get a collection of lazy bindings for a given collection of bindings.
+     */
     Injector.prototype._getLazyBindings = function (bindings) {
         var _this = this;
         return bindings.map(function (b) { return binding_1.bind(lazy_1.Lazy(b.token)).toValue({
@@ -189,6 +260,9 @@ var Injector = (function () {
             }
         }); });
     };
+    /**
+     * Detect a cyclic dependency lookup, and if there is one, throw.
+     */
     Injector.prototype._detectCycle = function (index, indexLog, tokenChain) {
         if (indexLog[index]) {
             throw new errors_1.CyclicDependencyError(tokenChain);
@@ -198,8 +272,12 @@ var Injector = (function () {
 })();
 exports.Injector = Injector;
 
-},{"./binding":1,"./errors":3,"./lazy":6,"./provider/facade":9,"es6-promise":15}],6:[function(require,module,exports){
+},{"./binding":1,"./errors":3,"./lazy":6,"./provider/facade":9}],6:[function(require,module,exports){
 var token_1 = require('./token');
+/**
+ * Get the corresponding Lazy token for a given token.
+ * @param {IToken<T>} token The non-lazy token
+ */
 function Lazy(token) {
     if (!token['___lazyToken']) {
         token['___lazyToken'] = token_1.Token.create("Lazy(" + token.getDebugName() + ")");
@@ -212,7 +290,9 @@ exports.Lazy = Lazy;
 
 
 },{}],8:[function(require,module,exports){
-require('es6-promise');
+/**
+ * Provider that gets values by constructing an instance of a class.
+ */
 var ClassProvider = (function () {
     function ClassProvider(Class, dependencyTokens) {
         this.dependencyTokens = dependencyTokens;
@@ -232,7 +312,7 @@ var ClassProvider = (function () {
 })();
 exports.ClassProvider = ClassProvider;
 
-},{"es6-promise":15}],9:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
@@ -243,7 +323,9 @@ __export(require('./class'));
 __export(require('./abstract'));
 
 },{"./abstract":7,"./class":8,"./factory":10,"./indexed":11,"./value":12}],10:[function(require,module,exports){
-require('es6-promise');
+/**
+ * Provider that gets values by invoking a factory function.
+ */
 var FactoryProvider = (function () {
     function FactoryProvider(factory, dependencyTokens) {
         this.dependencyTokens = dependencyTokens;
@@ -255,6 +337,9 @@ var FactoryProvider = (function () {
     return FactoryProvider;
 })();
 exports.FactoryProvider = FactoryProvider;
+/**
+ * Provider that gets a Promise for values by invoking a factory function.
+ */
 var AsyncFactoryProvider = (function () {
     function AsyncFactoryProvider(factory, dependencyTokens) {
         this.dependencyTokens = dependencyTokens;
@@ -267,7 +352,11 @@ var AsyncFactoryProvider = (function () {
 })();
 exports.AsyncFactoryProvider = AsyncFactoryProvider;
 
-},{"es6-promise":15}],11:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
+/**
+ * Provider that wraps another provider but indexes the dependency tokens
+ * within the context of an Injector.
+ */
 var IndexedProvider = (function () {
     function IndexedProvider(provider, getIndexForToken) {
         this._provider = provider;
@@ -282,7 +371,9 @@ var IndexedProvider = (function () {
 exports.IndexedProvider = IndexedProvider;
 
 },{}],12:[function(require,module,exports){
-require('es6-promise');
+/**
+ * Provider that gets values by returning a constant value.
+ */
 var ValueProvider = (function () {
     function ValueProvider(value) {
         this.dependencyTokens = [];
@@ -299,16 +390,26 @@ var ValueProvider = (function () {
 })();
 exports.ValueProvider = ValueProvider;
 
-},{"es6-promise":15}],13:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 // For envs that lack Function#name
 var FALLBACK_TOKEN_DEBUG_NAME = 'Token';
+/**
+ * A token is an abstract representation of a dependency of a given type.
+ */
 var Token = (function () {
     function Token() {
         throw new Error("Do not instantiate Token directly. Instead create tokens by subclassing or by using Token.create");
     }
+    /**
+     * Get a human-readable name for the token for debugging purposes.
+     */
     Token.getDebugName = function () {
         return this.name || FALLBACK_TOKEN_DEBUG_NAME;
     };
+    /**
+     * Create a token.
+     * @param {string} [debugName] A human-readable name for the token for debugging purposes.
+     */
     Token.create = function (debugName) {
         if (debugName === void 0) { debugName = FALLBACK_TOKEN_DEBUG_NAME; }
         return createInlineToken(debugName);
@@ -316,6 +417,10 @@ var Token = (function () {
     return Token;
 })();
 exports.Token = Token;
+/**
+ * Create an inline token with a given debug name.
+ * @param {string} debugName A human-readable name for the token for debugging purposes.
+ */
 function createInlineToken(debugName) {
     // Until TypeScript allows class expressions
     function InlineToken() {

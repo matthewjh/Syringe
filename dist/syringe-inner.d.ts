@@ -12,25 +12,47 @@ declare module '__syringe.ts/injector' {
     import { IBinding } from '__syringe.ts/binding';
     import { IToken } from '__syringe.ts/token';
     export interface IInjector {
-        get<T>(token: IToken<T>): Promise<T>;
+            get<T>(token: IToken<T>): Promise<T>;
     }
+    /**
+        * An Injector resolves tokens to values via bindings.
+        */
     export class Injector implements IInjector {
-        constructor(bindings: IBinding<any>[], parent?: IInjector);
-        get<T>(token: IToken<T>): Promise<T>;
+            /**
+                * @constructor
+                * @param {IBinding<any>[]} bindings The array of bindings to load onto the injector
+                * @param {IInjector} [parent] A parent for this injector, which will be delegated to for any tokens unbound on this injector
+                */
+            constructor(bindings: IBinding<any>[], parent?: IInjector);
+            /**
+                * Resolves a token to a Promise for a value.
+                * @param {IToken<T>} token Token to get
+                */
+            get<T>(token: IToken<T>): Promise<T>;
     }
 }
 
 declare module '__syringe.ts/token' {
     import { IToken } from '__syringe.ts/token';
     export interface IToken<T> {
-        new (): Token<T>;
-        getDebugName(): string;
+            new (): Token<T>;
+            getDebugName(): string;
     }
+    /**
+        * A token is an abstract representation of a dependency of a given type.
+        */
     export class Token<T> {
-        surrogate: T;
-        constructor();
-        static getDebugName(): string;
-        static create<T>(debugName?: string): IToken<T>;
+            surrogate: T;
+            constructor();
+            /**
+                * Get a human-readable name for the token for debugging purposes.
+                */
+            static getDebugName(): string;
+            /**
+                * Create a token.
+                * @param {string} [debugName] A human-readable name for the token for debugging purposes.
+                */
+            static create<T>(debugName?: string): IToken<T>;
     }
 }
 
@@ -39,6 +61,10 @@ declare module '__syringe.ts/lazy' {
     export interface ILazy<T> {
         get(): Promise<T>;
     }
+    /**
+      * Get the corresponding Lazy token for a given token.
+      * @param {IToken<T>} token The non-lazy token
+      */
     export function Lazy<T>(token: IToken<T>): IToken<ILazy<T>>;
 }
 
@@ -58,8 +84,8 @@ declare module '__syringe.ts/decorators' {
     export function Inject<T1, T2, T3, T4>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>): IInjectDecorator<T1, T2, T3, T4, {}, {}, {}, {}>;
     export function Inject<T1, T2, T3, T4, T5>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>): IInjectDecorator<T1, T2, T3, T4, T5, {}, {}, {}>;
     export function Inject<T1, T2, T3, T4, T5, T6>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>): IInjectDecorator<T1, T2, T3, T4, T5, T6, {}, {}>;
-    export function Inject<T1, T2, T3, T4, T5, T6, T7, T8>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>, token7: IToken<T7>, token8: IToken<T8>): IInjectDecorator<T1, T2, T3, T4, T5, T6, T7, T8>;
     export function Inject<T1, T2, T3, T4, T5, T6, T7>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>, token7: IToken<T7>): IInjectDecorator<T1, T2, T3, T4, T5, T6, T7, {}>;
+    export function Inject<T1, T2, T3, T4, T5, T6, T7, T8>(token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>, token7: IToken<T7>, token8: IToken<T8>): IInjectDecorator<T1, T2, T3, T4, T5, T6, T7, T8>;
 }
 
 declare module '__syringe.ts/binding' {
@@ -102,6 +128,10 @@ declare module '__syringe.ts/binding' {
         toAsyncFactory<T1, T2, T3, T4, T5, T6, T7>(factory: (dep1: T1, dep2: T2, dep3: T3, dep4: T4, dep5: T5, dep6: T6, dep7: T7) => Thenable<T>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>, token7: IToken<T7>): IBinding<T>;
         toAsyncFactory<T1, T2, T3, T4, T5, T6, T7, T8>(factory: (dep1: T1, dep2: T2, dep3: T3, dep4: T4, dep5: T5, dep6: T6, dep7: T7, dep8: T8) => Thenable<T>, token1: IToken<T1>, token2: IToken<T2>, token3: IToken<T3>, token4: IToken<T4>, token5: IToken<T5>, token6: IToken<T6>, token7: IToken<T7>, token8: IToken<T8>): IBinding<T>;
     }
+    /**
+      * Start binding a token.
+      * @param {IToken<T>} token The token to bind
+      */
     export function bind<T>(token: IToken<T>): IUnprovidedBinding<T>;
 }
 
@@ -152,6 +182,9 @@ declare module '__syringe.ts/provider/facade' {
 declare module '__syringe.ts/provider/value' {
     import { IToken } from '__syringe.ts/token';
     import { IProvider } from '__syringe.ts/provider/abstract';
+    /**
+      * Provider that gets values by returning a constant value.
+      */
     export class ValueProvider<T> implements IProvider<T> {
         dependencyTokens: IToken<any>[];
         constructor(value: T);
@@ -162,21 +195,31 @@ declare module '__syringe.ts/provider/value' {
 declare module '__syringe.ts/provider/factory' {
     import { IToken } from '__syringe.ts/token';
     import { IProvider } from '__syringe.ts/provider/abstract';
+    /**
+        * Provider that gets values by invoking a factory function.
+        */
     export class FactoryProvider<T> implements IProvider<T> {
-        dependencyTokens: IToken<any>[];
-        constructor(factory: (...deps: any[]) => T, dependencyTokens: IToken<any>[]);
-        get(dependencies: any[]): Promise<T>;
+            dependencyTokens: IToken<any>[];
+            constructor(factory: (...deps: any[]) => T, dependencyTokens: IToken<any>[]);
+            get(dependencies: any[]): Promise<T>;
     }
+    /**
+        * Provider that gets a Promise for values by invoking a factory function.
+        */
     export class AsyncFactoryProvider<T> implements IProvider<T> {
-        dependencyTokens: IToken<any>[];
-        constructor(factory: (...deps: any[]) => Thenable<T>, dependencyTokens: IToken<any>[]);
-        get(dependencies: any[]): Promise<T>;
+            dependencyTokens: IToken<any>[];
+            constructor(factory: (...deps: any[]) => Thenable<T>, dependencyTokens: IToken<any>[]);
+            get(dependencies: any[]): Promise<T>;
     }
 }
 
 declare module '__syringe.ts/provider/indexed' {
     import { IToken } from '__syringe.ts/token';
     import { IProvider } from '__syringe.ts/provider/abstract';
+    /**
+      * Provider that wraps another provider but indexes the dependency tokens
+      * within the context of an Injector.
+      */
     export class IndexedProvider<T> implements IProvider<T> {
         dependencyTokens: IToken<any>[];
         dependencyIndices: number[];
@@ -189,6 +232,9 @@ declare module '__syringe.ts/provider/class' {
     import { IToken } from '__syringe.ts/token';
     import { IProvider } from '__syringe.ts/provider/abstract';
     import { IStaticThatMaybeHasTokens } from '__syringe.ts/decorators';
+    /**
+      * Provider that gets values by constructing an instance of a class.
+      */
     export class ClassProvider<T> implements IProvider<T> {
         dependencyTokens: IToken<any>[];
         constructor(Class: IStaticThatMaybeHasTokens<any, any, any, any, any, any, any, any, any>, dependencyTokens: IToken<any>[]);
@@ -198,6 +244,9 @@ declare module '__syringe.ts/provider/class' {
 
 declare module '__syringe.ts/provider/abstract' {
     import { IToken } from '__syringe.ts/token';
+    /**
+      * A provider is recipe for building a value that may have dependencies.
+      */
     export interface IProvider<T> {
         dependencyTokens: IToken<any>[];
         get(dependencies: any[]): Promise<T>;

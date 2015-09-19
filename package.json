@@ -1,6 +1,6 @@
 {
   "name": "syringe.ts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Type-safe, async library for TypeScript dependency injection",
   "keywords": [
     "typescript",
