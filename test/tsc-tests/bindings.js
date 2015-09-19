@@ -1,4 +1,5 @@
 ///<reference path="../../built/src/syringe.d.ts"/>
+///<reference path="../../typings/tsd.d.ts"/>
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -93,7 +94,7 @@ syringe_ts_1.bind(AToken).toClass(A);
 syringe_ts_1.bind(AToken).toClass(A, OneToken);
 // Should fail -- A's ctor's parameter is of type number, not string
 syringe_ts_1.bind(AToken).toClass(A, StringToken);
-// Should fail -- A's ctor's parameter is of type number, not string
+// Should fail -- B's ctor's parameter is of type number, not string
 syringe_ts_1.bind(BToken).toClass(B, StringToken);
 // Should fail because B is not A
 syringe_ts_1.bind(AToken).toClass(B);

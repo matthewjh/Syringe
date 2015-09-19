@@ -1,64 +1,64 @@
 {
- "diagnostics": [
+  "diagnostics": [
     {
       "message": "Argument of type '(two: any) => number' is not assignable to parameter of type '() => number'.",
       "character": 25,
-      "line": 25
+      "line": 26
     },
     {
       "message": "Argument of type '() => number' is not assignable to parameter of type '() => string'.\n  Type 'number' is not assignable to type 'string'.",
       "character": 28,
-      "line": 28
+      "line": 29
     },
     {
       "message": "Property 'split' does not exist on type 'number'.",
       "character": 36,
-      "line": 31
+      "line": 32
     },
     {
       "message": "Argument of type 'string' is not assignable to parameter of type 'number'.",
       "character": 25,
-      "line": 34
+      "line": 35
     },
     {
       "message": "Argument of type '(two: any) => Promise<number>' is not assignable to parameter of type '() => Thenable<number>'.",
       "character": 30,
-      "line": 43
+      "line": 44
     },
     {
       "message": "Argument of type '() => Promise<string>' is not assignable to parameter of type '() => Thenable<number>'.\n  Type 'Promise<string>' is not assignable to type 'Thenable<number>'.\n    Types of property 'then' are incompatible.\n      Type '{ <U>(onFulfilled?: (value: string) => U | Thenable<U>, onRejected?: (error: any) => U | Thenable...' is not assignable to type '{ <U>(onFulfilled?: (value: number) => U | Thenable<U>, onRejected?: (error: any) => U | Thenable...'.\n        Types of parameters 'onFulfilled' and 'onFulfilled' are incompatible.\n          Type '(value: string) => any' is not assignable to type '(value: number) => any'.\n            Types of parameters 'value' and 'value' are incompatible.\n              Type 'string' is not assignable to type 'number'.",
       "character": 30,
-      "line": 46
+      "line": 47
     },
     {
       "message": "Argument of type '(two: number) => number' is not assignable to parameter of type '(dep1: number) => Thenable<number>'.\n  Type 'number' is not assignable to type 'Thenable<number>'.\n    Property 'then' is missing in type 'Number'.",
       "character": 30,
-      "line": 49
+      "line": 50
     },
     {
-      "message": "Argument of type 'typeof A' is not assignable to parameter of type 'IStaticWithArgs<A, string, {}, {}, {}, {}, {}, {}, {}>'.\n  Types of parameters 'one' and 'dep1' are incompatible.\n    Type 'number' is not assignable to type 'string'.",
+      "message": "The type argument for type parameter 'T1' cannot be inferred from the usage. Consider specifying the type arguments explicitly.\n  Type argument candidate 'number' is not a valid type argument because it is not a supertype of candidate 'string'.",
+      "character": 0,
+      "line": 59
+    },
+    {
+      "message": "The type argument for type parameter 'T1' cannot be inferred from the usage. Consider specifying the type arguments explicitly.\n  Type argument candidate 'A' is not a valid type argument because it is not a supertype of candidate 'string'.\n    Property 'one' is missing in type 'String'.",
+      "character": 0,
+      "line": 62
+    },
+    {
+      "message": "Argument of type 'typeof B' is not assignable to parameter of type 'IStaticThatMaybeHasTokens<A, any, any, any, any, any, any, any, any>'.\n  Type 'B' is not assignable to type 'A'.\n    Property 'one' is missing in type 'B'.",
       "character": 21,
-      "line": 58
+      "line": 65
     },
     {
-      "message": "Argument of type 'typeof B' is not assignable to parameter of type 'IStaticWithArgs<B, string, {}, {}, {}, {}, {}, {}, {}>'.\n  Types of parameters 'a' and 'dep1' are incompatible.\n    Type 'A' is not assignable to type 'string'.",
-      "character": 21,
-      "line": 61
-    },
-    {
-      "message": "Argument of type 'typeof B' is not assignable to parameter of type 'IStatic<A>'.\n  Type 'B' is not assignable to type 'A'.\n    Property 'one' is missing in type 'B'.",
-      "character": 21,
-      "line": 64
-    },
-    {
-      "message": "Argument of type 'typeof DecoratedA' is not assignable to parameter of type 'IStaticWithArgs<DecoratedA, string, {}, {}, {}, {}, {}, {}, {}>'.\n  Types of parameters 'one' and 'dep1' are incompatible.\n    Type 'number' is not assignable to type 'string'.",
-      "character": 30,
-      "line": 76
+      "message": "The type argument for type parameter 'T1' cannot be inferred from the usage. Consider specifying the type arguments explicitly.\n  Type argument candidate 'number' is not a valid type argument because it is not a supertype of candidate 'string'.",
+      "character": 0,
+      "line": 77
     },
     {
       "message": "Argument of type 'typeof DecoratedA2' is not assignable to parameter of type 'IStaticThatMaybeHasTokens<any, string, {}, {}, {}, {}, {}, {}, {}>'.\n  Types of parameters 'one' and 'dep1' are incompatible.\n    Type 'number' is not assignable to type 'string'.",
       "character": 1,
-      "line": 80
+      "line": 81
     }
   ]
 }

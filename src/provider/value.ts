@@ -1,8 +1,9 @@
-import 'es6-promise';
-
 import {IToken} from '../token';
 import {IProvider} from './abstract';
 
+/**
+ * Provider that gets values by returning a constant value. 
+ */
 export class ValueProvider<T> implements IProvider<T> {
   public dependencyTokens: IToken<any>[];
   

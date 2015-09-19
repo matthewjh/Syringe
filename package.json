@@ -1,7 +1,7 @@
 {
   "name": "syringe.ts",
-  "version": "0.0.18",
-  "description": "Type-safe dependency injection library for TypeScript",
+  "version": "1.0.0",
+  "description": "Type-safe, async dependency injection for TypeScript",
   "keywords": [
     "typescript",
     "di",
@@ -15,7 +15,8 @@
   ],
   "main": "dist/syringe.js",
   "scripts": {
-    "test": "$(npm bin)/gulp test.sauce && $(npm bin)/gulp test.tsc"
+    "preversion": "gulp test && gulp test.tsc && gulp package && git add -A dist",
+    "test": "gulp test.sauce && gulp test.tsc"
   },
   "repository": {
     "type": "git",

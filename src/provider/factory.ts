@@ -1,8 +1,9 @@
-import 'es6-promise';
-
 import {IToken} from '../token';
 import {IProvider} from './abstract'
 
+/**
+ * Provider that gets values by invoking a factory function.
+ */
 export class FactoryProvider<T> implements IProvider<T> {
   public dependencyTokens: IToken<any>[];
   
@@ -20,6 +21,9 @@ export class FactoryProvider<T> implements IProvider<T> {
   }
 }
 
+/**
+ * Provider that gets a Promise for values by invoking a factory function.
+ */
 export class AsyncFactoryProvider<T> implements IProvider<T> {
   public dependencyTokens: IToken<any>[];
   

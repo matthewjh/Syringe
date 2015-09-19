@@ -1,6 +1,10 @@
 import {IToken} from '../token';
 import {IProvider} from './abstract';
 
+/**
+ * Provider that wraps another provider but indexes the dependency tokens
+ * within the context of an Injector.
+ */
 export class IndexedProvider<T> implements IProvider<T> {
   public dependencyTokens: IToken<any>[];
   public dependencyIndices: number[];
