@@ -95,7 +95,9 @@ export class Injector implements IInjector {
     indexLog[index] = true;
    
     let dependencyPromises = provider.dependencyIndices.map((depIndex, i) => {
-      if (depIndex === -1) {
+      let maybeDecorating = depIndex === index;
+      
+      if (depIndex === -1 || maybeDecorating) {
         let token = provider.dependencyTokens[i];
         
         return this._getFromParent(token);
