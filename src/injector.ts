@@ -13,7 +13,7 @@ interface ICache extends Array<Promise<any>> {
 }
 
 export interface IInjector {
-		get<T>(token: IToken<T>): Promise<T>;
+	get<T>(token: IToken<T>): Promise<T>;
 }
 
 /**
@@ -95,7 +95,7 @@ export class Injector implements IInjector {
     indexLog[index] = true;
 
     let dependencyPromises = provider.dependencyIndices.map((depIndex, i) => {
-      let maybeDecorating = depIndex === index;
+      let maybeDecorating = this._parent && depIndex === index;
 
       if (depIndex === -1 || maybeDecorating) {
         let token = provider.dependencyTokens[i];
