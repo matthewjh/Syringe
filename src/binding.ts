@@ -58,7 +58,7 @@ export interface IUnprovidedBinding<T> {
 /**
  * A binding between a token and a provider.
  */
- class Binding<T> implements IBinding<T> {
+class Binding<T> implements IBinding<T> {
   public token: IToken<T>;
   public provider: IProvider<T>;
 
@@ -71,14 +71,14 @@ export interface IUnprovidedBinding<T> {
 /**
  * An unprovided binding is a binding that has a token but no provider.
  */
- class UnprovidedBinding<T> implements IUnprovidedBinding<T> {
+class UnprovidedBinding<T> implements IUnprovidedBinding<T> {
   private _token: IToken<T>;
   
   /**
    * @constructor
    * @param {IToken<T>} token Token to bind
    */
-   constructor(token: IToken<T>) {
+  constructor(token: IToken<T>) {
     this._token = token;
   }
   
@@ -86,7 +86,7 @@ export interface IUnprovidedBinding<T> {
    * Bind the token to a value.
    * @param {T} value Value to bind to the token
    */
-   toValue(value: T): Binding<T> {
+  toValue(value: T): Binding<T> {
     return new Binding(this._token, new ValueProvider(value));
   }
   
@@ -95,7 +95,7 @@ export interface IUnprovidedBinding<T> {
    * @param {Function} factory Factory function that returns the value for the token
    * @param {...IToken<any>[]} [dependencyTokens] Tokens to inject into the factory function
    */
-   toFactory<T1, T2, T3, T4, T5, T6, T7, T8>(factory: (...deps: any[]) => T, ...dependencyTokens: IToken<any>[]): IBinding<T> {
+  toFactory<T1, T2, T3, T4, T5, T6, T7, T8>(factory: (...deps: any[]) => T, ...dependencyTokens: IToken<any>[]): IBinding<T> {
     return new Binding(this._token, new FactoryProvider(factory, dependencyTokens));
   }
 
@@ -104,7 +104,7 @@ export interface IUnprovidedBinding<T> {
    * @param {Function} factory Factory function that returns the Promise for the value for the token
    * @param {...IToken<any>[]} dependencyTokens Tokens to inject into the factory function
    */
-   toAsyncFactory<T1, T2, T3, T4, T5, T6, T7, T8>(factory: (...deps: any[]) => Promise<T>, ...dependencyTokens: IToken<any>[]): IBinding<T> {
+  toAsyncFactory<T1, T2, T3, T4, T5, T6, T7, T8>(factory: (...deps: any[]) => Promise<T>, ...dependencyTokens: IToken<any>[]): IBinding<T> {
     return new Binding(this._token, new AsyncFactoryProvider(factory, dependencyTokens));
   }
   
@@ -113,7 +113,7 @@ export interface IUnprovidedBinding<T> {
    * @param {Class} Class Class to new up when resolving the token
    * @param {...IToken<any>[]} dependencyTokens Tokens to inject into the constructor
    */
-   toClass<T1, T2, T3, T4, T5, T6, T7, T8>(Class: IStaticWithArgs<T, T1, T2, T3, T4, T5, T6, T7, T8>, ...dependencyTokens: IToken<any>[]): IBinding<T> {
+  toClass<T1, T2, T3, T4, T5, T6, T7, T8>(Class: IStaticWithArgs<T, T1, T2, T3, T4, T5, T6, T7, T8>, ...dependencyTokens: IToken<any>[]): IBinding<T> {
     return new Binding<T>(this._token, new ClassProvider(Class, dependencyTokens));
   }
 }
@@ -122,6 +122,6 @@ export interface IUnprovidedBinding<T> {
  * Start binding a token.
  * @param {IToken<T>} token The token to bind
  */
- export function bind<T>(token: IToken<T>): IUnprovidedBinding<T> {
+export function bind<T>(token: IToken<T>): IUnprovidedBinding<T> {
   return new UnprovidedBinding<T>(token);
 }
