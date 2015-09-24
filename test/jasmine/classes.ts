@@ -51,7 +51,6 @@ class ClassReturningNumberFromConstructor {
   }
 }
 
-
 describe('injector with class bindings', () => {
   it('should correctly resolve values from tokens via class factories when tokens are passed', (done) => {
     let bindings = [
@@ -144,6 +143,42 @@ describe('injector with class bindings', () => {
     
     injector.get(ClassReturningNumberFromConstructorToken).then(value => {
       expect(value).toEqual(jasmine.any(ClassReturningNumberFromConstructor));
+      done();
+    });
+  });
+
+  it('should work with es6 classes', (done) => {
+    let ClazzToken = Token.create();
+    let Clazz;
+
+    try {
+      Clazz = eval(`
+        'use strict';
+
+        class A {
+          constructor(one) {
+            this.one = one;
+          }
+        }
+      `);
+    } catch (e) {
+      if (e instanceof SyntaxError) {
+        console.warn('ES6 classes not supported on this environment; skipping test');
+        done();
+        
+        return;
+      } else {
+        throw e;
+      }
+    }
+
+    let injector = new Injector([
+      bind(OneToken).toValue(1),
+      bind(ClazzToken).toClass(Clazz, OneToken)
+    ]);
+
+    injector.get(ClazzToken).then((instance: any) => {
+      expect(instance.one).toEqual(1);
       done();
     });
   });
