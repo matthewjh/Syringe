@@ -1,4 +1,3 @@
-var gulp = require('gulp');
 var glob = require('glob');
 
 module.exports = function () {
