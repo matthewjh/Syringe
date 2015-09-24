@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/matthewjh/Syringe#readme",
   "devDependencies": {
+    "babel": "^5.8.23",
     "browserify": "^11.0.1",
     "colors": "^1.1.2",
     "deep-equal": "^1.0.0",
@@ -49,6 +50,7 @@
     "karma-jasmine": "^0.3.6",
     "karma-sauce-launcher": "^0.2.14",
     "merge2": "^0.3.6",
+    "mkdirp": "^0.5.1",
     "rimraf": "^2.4.3",
     "tsd": "^0.6.3",
     "typescript": "^1.6.0-dev.20150805",

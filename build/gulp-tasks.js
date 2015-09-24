@@ -46,7 +46,7 @@ module.exports = function () {
 		rimraf('./' + paths.distFolder, done);
 	});
 
-	gulp.task('build', function () {
+	gulp.task('build', ['generate'], function () {
 		var tsconfig = require('../tsconfig.json');
 		tsconfig.compilerOptions.typescript = require('typescript');
 		
@@ -100,4 +100,6 @@ module.exports = function () {
 	});
 
 	gulp.task('test.tsc', ['build'], require('./gulp-tasks/run-tsc-tests'));
+
+  gulp.task('generate', require('./gulp-tasks/generate'));
 };
