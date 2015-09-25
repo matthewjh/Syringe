@@ -40,14 +40,9 @@ export class Token<T> {
  * @param {string} debugName A human-readable name for the token for debugging purposes.
  */
 function createInlineToken<T>(debugName: string): IToken<T> {
-	// Until TypeScript allows class expressions
-	
-	function InlineToken() {
-		Token.apply(this, arguments);
-	}
-	
-	InlineToken.prototype = Object.create(Token.prototype);
-	InlineToken['getDebugName'] = () => debugName; 
-	
-	return <any>InlineToken;
+  return class InlineToken extends Token<T> {
+    static getDebugName(): string {
+      return debugName; 
+    }
+  }
 }
